@@ -11,16 +11,16 @@
    Survol : jamais d'aplat gris ; on soulève l'élément (ombre hard edge) ou on souligne le texte. */
 :root{
   --ground:#FFFFFF; --ground-2:#EEEEEE; --gray-2:#D8D8D8; --rule:#B4B4B4; --dot:#E5E5E5;
-  --ink:#1B1B1B; --ink-2:#696969; --ink-3:#929292;
+  --ink:#1B1B1B; --ink-2:#696969;
   /* phases : pastel (surligneur) / survol / teinte claire du kit (fond) / accent du kit (trait) */
-  --warm:#FFDE75; --warm-l:#FFF5D3;
+  --warm:#FFDE75;
   --focus:#A9C6F1; --focus-h:#97B9EC; --focus-l:#EDF4FF;
   --rest:#A5EBD9; --rest-h:#8FE3CE; --rest-l:#DAFCF3; --rest-a:#37D4AD;
   --pin:#F4B9F5; --pin-h:#EFA6F0;
-  --lite:#FDC79F;
+  --lite:#FDC79F; --rite:#D8D8D8;
   /* projets */
   --lav:#C9B8E6; --butter:#FFDE75; --aqua:#A2E7E7; --mauve:#F4B9F5; --pista:#D7EC97; --sable:#93CCD9; --none:#D8D8D8;
-  --on-fill:#1B1B1B; --danger:#C8204A; --badge:#E12B56;
+  --on-fill:#1B1B1B; --danger:#C8204A;
   --plan-op:.45; --sh-s:0 4px 4px rgba(0,0,0,.16); --sh-hard:0 4px 0 rgba(51,51,51,.16); --sh-press:0 1px 0 rgba(51,51,51,.16);
   --f-display:"Patrick Hand","Segoe Print","Comic Neue","Bradley Hand",cursive;
   --f-body:"Patrick Hand","Segoe Print","Comic Neue","Bradley Hand",cursive;
@@ -30,15 +30,15 @@
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --ground:#1B1B1B; --ground-2:#333333; --gray-2:#454545; --rule:#696969; --dot:#2C2C2C;
-  --ink:#FFFFFF; --ink-2:#B4B4B4; --ink-3:#929292;
-  --warm-l:#3A3322; --focus-l:#22293A; --rest-l:#1F3631;
+  --ink:#FFFFFF; --ink-2:#B4B4B4;
+  --focus-l:#22293A; --rest-l:#1F3631;
   --none:#454545; --danger:#FF8FA8;
   --plan-op:.85; --sh-s:0 4px 4px rgba(0,0,0,.5); --sh-hard:0 4px 0 rgba(0,0,0,.6); --sh-press:0 1px 0 rgba(0,0,0,.6);
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --ground:#1B1B1B; --ground-2:#333333; --gray-2:#454545; --rule:#696969; --dot:#2C2C2C;
-  --ink:#FFFFFF; --ink-2:#B4B4B4; --ink-3:#929292;
-  --warm-l:#3A3322; --focus-l:#22293A; --rest-l:#1F3631;
+  --ink:#FFFFFF; --ink-2:#B4B4B4;
+  --focus-l:#22293A; --rest-l:#1F3631;
   --none:#454545; --danger:#FF8FA8;
   --plan-op:.85; --sh-s:0 4px 4px rgba(0,0,0,.5); --sh-hard:0 4px 0 rgba(0,0,0,.6); --sh-press:0 1px 0 rgba(0,0,0,.6);
   color-scheme:dark}
