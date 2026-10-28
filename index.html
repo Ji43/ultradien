@@ -174,6 +174,8 @@ h2{font-family:var(--f-display);font-weight:400;font-size:28px;margin:0;text-wra
 .player .num{font-size:16px;color:var(--ink-2)}
 
 .review{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%}
+.note-row{display:flex;flex-direction:column;gap:6px;width:100%;max-width:420px}
+.log-note{display:block;font-size:14px;line-height:18px;color:var(--ink-2);margin-top:2px}
 .review-q{font-family:var(--f-display);font-size:24px;line-height:30px}
 .rating{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 .rating .chip{font-size:18px;padding:6px 14px;border-radius:var(--r)}
@@ -512,7 +514,7 @@ function lightPause(){
   if(ms < MIN){ toast("Moins d'une minute : non enregistré."); saveState(); render(); return; }
   addSession({ id:a.id, taskId:a.taskId, start:a.start, end, ms, recenters:a.recenters.length, mode:"light" });
   const mins = flowBreak(ms);
-  S.pause = { start:end, minutes:mins, chimed:false, nsdr:false, nsdrHidden:false, light:true };
+  S.pause = { start:end, minutes:mins, chimed:false, nsdr:false, nsdrHidden:false, light:true, rev:{ sid:a.id, month:monthKey(a.start), rating:null } };
   saveState(); render(); toast(`${fmt(ms)} de travail léger : pause de ${mins} min, calculée sur ton temps.`);
 }
 function endDay(){
@@ -565,8 +567,17 @@ function endBlock(auto=false){
   if(auto) chime("end");
   saveState(); render();
 }
+const currentReview = () => S.review || (S.pause && S.pause.rev) || null;
+const sessionOf = r => { const log = LOGS[r.month]; return log && (log.sessions||[]).find(x => x.id === r.sid); };
+function noteBlock(text){
+  const r = currentReview(); if(!r) return;
+  const s = sessionOf(r), t = String(text || "").trim().slice(0, 200);
+  if(!s || (s.note || "") === t) return;
+  if(t) s.note = t; else delete s.note;
+  persist(r.month, LOGS[r.month]);
+}
 function rateBlock(n){
-  const r = S.review; if(!r) return;
+  const r = currentReview(); if(!r) return;
   r.rating = r.rating === n ? null : n;
   const log = LOGS[r.month], s = log && (log.sessions||[]).find(x => x.id === r.sid);
   if(s){ if(r.rating) s.focus = r.rating; else delete s.focus; persist(r.month, LOGS[r.month]); }
@@ -807,7 +818,25 @@ const ICON = {
   edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
   pauseI:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>',
 };
+function rateUI(r, q){
+  const s = sessionOf(r) || {}, open = ui.noteOpen === r.sid || !!s.note;
+  return `<div class="review-q">${q}</div>
+    <div class="rating" role="group" aria-label="Note de concentration">${RATINGS.map((l,i)=>`<button type="button" class="chip" data-rate="${i+1}" aria-pressed="${r.rating===i+1}">${l}</button>`).join("")}</div>
+    ${open ? `<div class="note-row"><label class="field-label" for="b-note">Note perso <span class="muted">(facultatif)</span></label>
+      <input class="input" id="b-note" maxlength="200" autocomplete="off" placeholder="Ce qui a aidé ou gêné ta concentration" value="${esc(s.note || "")}"></div>`
+      : `<button type="button" class="link-btn" id="b-note-open">${ICON.plus.replace("<svg",'<svg width="12" height="12" style="vertical-align:-1px;margin-right:4px"')}Ajouter une note perso</button>`}`;
+}
+function wireRate(c){
+  c.querySelectorAll("[data-rate]").forEach(b => b.onclick = () => rateBlock(+b.dataset.rate));
+  const r = currentReview(), op = c.querySelector("#b-note-open");
+  if(op) op.onclick = () => { ui.noteOpen = r.sid; renderControls(); const n = $("#b-note"); if(n) n.focus(); };
+  const n = c.querySelector("#b-note");
+  if(n){ n.onchange = () => noteBlock(n.value); n.onkeydown = e => { if(e.key === "Enter"){ e.preventDefault(); n.blur(); } };
+    if(ui.refocusNote){ ui.refocusNote = false; n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }
+}
 function renderControls(){
+  { const n = document.activeElement && document.activeElement.id === "b-note" ? document.activeElement : null;
+    if(n){ noteBlock(n.value); ui.refocusNote = true; } }
   const c = $("#controls"), r = S.review;
   const stopBtn = `<button class="btn quiet" id="b-stop">${ICON.stop.replace("<svg",'<svg width="12" height="12" style="vertical-align:-1px;margin-right:4px"')}Terminer la session</button>`;
   if(S.active && S.active.light){
@@ -834,20 +863,22 @@ function renderControls(){
   } else if(r){
     const chain = canChain(r), next = Math.max(1, Math.min(S.settings.cap, Math.floor(SERIES_MAX - r.total/MIN)));
     c.innerHTML = `<div class="review">
-      <div class="review-q">Comment était ta concentration ?</div>
-      <div class="rating" role="group" aria-label="Note de concentration">${RATINGS.map((l,i)=>`<button type="button" class="chip" data-rate="${i+1}" aria-pressed="${r.rating===i+1}">${l}</button>`).join("")}</div>
+      ${rateUI(r, "Comment était ta concentration ?")}
       ${chain && r.rating === 4 ? `<p class="hint">Tu es en flow : enchaîne tant que ça coule.</p>` : chain ? `<p class="hint">Bloc court : tu peux enchaîner sans pause, ou en allonger la durée ci-dessous.</p>` : ""}
       <div class="controls">${chain ? `<button class="btn fill blue" id="b-chain">${ICON.play}Enchaîner ${next} min</button>` : ""}
         <button class="btn fill sage" id="b-pause">Pause de ${pauseMinutes(r.total)} min</button>${stopBtn}</div>
       <button type="button" class="link-btn" id="b-discard">Bloc lancé par erreur ? Le supprimer</button></div>`;
-    c.querySelectorAll("[data-rate]").forEach(b => b.onclick = () => rateBlock(+b.dataset.rate));
+    wireRate(c);
     if(chain) $("#b-chain").onclick = chainNext;
     $("#b-pause").onclick = takePause; $("#b-stop").onclick = endDay;
     const bd = $("#b-discard"); bd.onclick = () => arm(bd, "Confirmer la suppression de ce bloc", discardReview);
   } else if(S.pause){
     const over = Date.now() - S.pause.start >= S.pause.minutes*MIN;
-    c.innerHTML = `<button class="btn fill blue" id="b-start">${ICON.play}${over ? "Nouveau bloc" : "Reprendre maintenant"}</button>
+    const btns = `<button class="btn fill blue" id="b-start">${ICON.play}${over ? "Nouveau bloc" : "Reprendre maintenant"}</button>
       ${over ? "" : `<button class="btn fill sage" id="b-ext">${ICON.plus}5 min de pause</button>`}${stopBtn}`;
+    const pr = S.pause.rev && sessionOf(S.pause.rev) ? S.pause.rev : null;
+    c.innerHTML = pr ? `<div class="review">${rateUI(pr, "Ton bloc léger : comment était ta concentration ?")}<div class="controls">${btns}</div></div>` : btns;
+    if(pr) wireRate(c);
     $("#b-start").onclick = beginBlock; if(!over) $("#b-ext").onclick = extendPause; $("#b-stop").onclick = endDay;
   } else {
     c.innerHTML = `<button class="btn fill blue" id="b-start" ${S.currentTaskId?"":"disabled"}>${ICON.play}${S.mode === "light" ? "Démarrer le chrono" : "Démarrer le bloc"} <span class="kbd">Espace</span></button>`;
@@ -1018,7 +1049,7 @@ function renderHist(){
   $("#totals").querySelectorAll("[data-sort]").forEach(b=>b.onclick=()=>{ ui.sort = b.dataset.sort; renderHist(); });
   const logN = ui.logN || 12, last = ss.slice(-logN).reverse();
   $("#log").innerHTML = `<thead><tr><th>Date</th><th>Tâche</th><th class="hide-sm">Mode</th><th class="r">Durée</th><th class="r hide-sm">Recentrages</th><th class="hide-sm">Concentration</th><th><span class="sr">Actions</span></th></tr></thead><tbody>` +
-    (last.length ? last.map(s=>{ const d = new Date(s.start); return `<tr><td class="num" style="white-space:nowrap">${d.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})}, ${d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</td><td>${esc((taskById(s.taskId)||{name:"Tâche supprimée"}).name)}</td><td class="hide-sm">${modeOf(s)==="light"?"Léger":"Profond"}</td><td class="r num">${fmt(s.ms)}</td><td class="r num hide-sm">${s.recenters||0}</td><td class="hide-sm">${s.focus ? RATINGS[s.focus-1] : "—"}</td><td class="act"><button class="icon-btn" data-del-s="${s.id}" aria-label="Supprimer ce bloc" title="Supprimer ce bloc">${ICON.trash}</button></td></tr>`; }).join("")
+    (last.length ? last.map(s=>{ const d = new Date(s.start); return `<tr><td class="num" style="white-space:nowrap">${d.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})}, ${d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</td><td>${esc((taskById(s.taskId)||{name:"Tâche supprimée"}).name)}${s.note ? `<span class="log-note">${esc(s.note)}</span>` : ""}</td><td class="hide-sm">${modeOf(s)==="light"?"Léger":"Profond"}</td><td class="r num">${fmt(s.ms)}</td><td class="r num hide-sm">${s.recenters||0}</td><td class="hide-sm">${s.focus ? RATINGS[s.focus-1] : "—"}</td><td class="act"><button class="icon-btn" data-del-s="${s.id}" aria-label="Supprimer ce bloc" title="Supprimer ce bloc">${ICON.trash}</button></td></tr>`; }).join("")
     : `<tr><td colspan="7" style="color:var(--ink-2);text-align:center;padding:18px">Aucun bloc pour l'instant.</td></tr>`) + "</tbody>";
   $("#log-more").hidden = ss.length <= logN;
   $("#log").querySelectorAll("[data-del-s]").forEach(b => b.onclick = () => arm(b, `<span style="font-size:14px">Confirmer</span>`, () => { deleteSession(b.dataset.delS); renderHist(); render(); toast("Bloc supprimé des statistiques."); }));
