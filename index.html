@@ -13,7 +13,7 @@
   --focus:#AFC2F3; --focus-t:#4B6BC6;
   --rest:#A9DCC5; --rest-t:#378A6B;
   --pin:#F3A2B7; --pin-t:#C2496B;
-  --thr-warm:#B85F2E; --thr-focus:#4462BE; --thr-rest:#2F7F61; --pearl:#FBFBF7;
+  --thr-warm:#B85F2E; --thr-focus:#4462BE; --thr-rest:#2F7F61; --thr-lite:#7E6A48; --lite:#E7DCC6; --lite-t:#76623F; --pearl:#FBFBF7;
   --lav:#C8B8F0; --lav-t:#6A55BD; --butter:#F1DD92; --butter-t:#A88415; --aqua:#A2D8E4; --aqua-t:#2A7E90;
   --mauve:#E6B8DF; --mauve-t:#94488B; --pista:#C9E2A0; --pista-t:#55791B; --sable:#E6CFB2; --sable-t:#85643F;
   --none:#E8E2D2; --none-t:#5F8E7A;
@@ -33,6 +33,7 @@
   --lav:#CBBCF2; --lav-t:#CBBCF2; --butter:#F3DF98; --butter-t:#F3DF98; --aqua:#A7DCE7; --aqua-t:#A7DCE7;
   --mauve:#EABFE3; --mauve-t:#EABFE3; --pista:#CDE5A6; --pista-t:#CDE5A6; --sable:#EAD4B8; --sable-t:#EAD4B8;
   --none:#E6DFCC; --none-t:#E6DFCC;
+  --lite:#E9DEC8; --lite-t:#E9DEC8;
   --focus-ring:#C9D7FF; --danger:#FF9BB4;
   color-scheme:dark}}
 :root[data-theme="dark"]{
@@ -46,6 +47,7 @@
   --lav:#CBBCF2; --lav-t:#CBBCF2; --butter:#F3DF98; --butter-t:#F3DF98; --aqua:#A7DCE7; --aqua-t:#A7DCE7;
   --mauve:#EABFE3; --mauve-t:#EABFE3; --pista:#CDE5A6; --pista-t:#CDE5A6; --sable:#EAD4B8; --sable-t:#EAD4B8;
   --none:#E6DFCC; --none-t:#E6DFCC;
+  --lite:#E9DEC8; --lite-t:#E9DEC8;
   --focus-ring:#C9D7FF; --danger:#FF9BB4;
   color-scheme:dark}
 
@@ -105,6 +107,7 @@ h2{font-family:var(--f-display);font-weight:700;font-size:24px;letter-spacing:-.
 .pillow svg{width:100%;height:100%;display:block;overflow:visible}
 .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;padding:0 27%}
 .clock{font-family:var(--f-display);font-weight:700;font-size:clamp(40px,9.5vw,58px);line-height:1;letter-spacing:-.02em}
+.clock.small{font-size:clamp(30px,6.5vw,42px)}
 .phase{font-family:var(--f-display);font-style:normal;font-weight:700;font-size:19px;margin-top:6px;color:var(--phase-t,var(--ink))}
 .sub{font-size:clamp(12px,3.2vw,13.5px);color:var(--ink-2);margin-top:4px;line-height:1.4}
 
@@ -127,6 +130,27 @@ h2{font-family:var(--f-display);font-weight:700;font-size:24px;letter-spacing:-.
 .seg button:disabled{cursor:not-allowed;opacity:.55}
 
 .rest-note{width:100%;max-width:440px;padding:14px 18px;border:1.5px dashed var(--rest-t);border-radius:var(--r);background:color-mix(in srgb,var(--rest) 22%,transparent)}
+.settings{flex-direction:column;gap:10px}
+.badge{font-size:12.5px;font-weight:700;color:var(--lite-t);border:1px solid currentColor;border-radius:var(--r);padding:0 7px;margin-left:4px;vertical-align:1px}
+.dayend{display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px}
+.dayend textarea{width:100%;min-height:70px;padding:10px 12px;border:1.5px solid var(--rule);border-radius:var(--r);background:var(--linen);font:inherit;color:inherit;resize:vertical}
+.dayend label{font-size:13px;font-weight:600;color:var(--ink-2)}
+.set-row{display:flex;gap:10px 18px;flex-wrap:wrap;justify-content:center;align-items:center}
+.settings .seg button{padding:4px 8px}
+.muted{color:var(--ink-2);font-style:normal}
+.hint{margin:0;font-size:13px;color:var(--ink-2);text-align:center;max-width:46ch}
+.vol{display:inline-flex;align-items:center;gap:6px}
+.vol input{width:90px;accent-color:var(--focus-t)}
+.review{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+.review-q{font-family:var(--f-display);font-weight:700;font-size:19px}
+.rating{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.rating .chip{font-size:14px;padding:7px 14px}
+.nsdr{border-color:var(--focus-t);background:color-mix(in srgb,var(--focus) 18%,transparent);display:flex;flex-direction:column;gap:8px}
+.nsdr p{margin:0;color:var(--ink-2)}
+.nsdr .ghost{align-self:flex-start}
+.player{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.player input[type=range]{flex:1 1 140px;accent-color:var(--rest-t)}
+.player .num{font-size:13px;color:var(--ink-2)}
 .rest-note h3{font-family:var(--f-display);font-size:19px;margin:0 0 6px}
 .rest-note ul{margin:0;padding-left:18px;color:var(--ink-2)}
 .rest-note li{margin:3px 0}
@@ -228,7 +252,7 @@ td.r{white-space:nowrap}
         </div>
         <div class="pillow" id="pillow" aria-live="polite"></div>
         <div class="controls" id="controls"></div>
-        <div class="settings" id="settings"></div>
+        <div class="rest-note nsdr" id="nsdr-box" hidden></div>
         <div class="rest-note" id="rest-note" hidden>
           <h3>Défocalisation délibérée</h3>
           <ul>
@@ -237,6 +261,7 @@ td.r{white-space:nowrap}
             <li>Une tâche machinale, ou rien du tout : laisse l'esprit au ralenti.</li>
           </ul>
         </div>
+        <div class="settings" id="settings"></div>
       </div>
 
       <div class="panel">
@@ -297,6 +322,7 @@ td.r{white-space:nowrap}
             <p>Sur l'autre appareil, importe ce fichier : il est fusionné avec ce qui existe déjà, sans doublon ni perte.</p>
             <div class="row"><label class="btn file-btn" for="import-file">Importer une sauvegarde<input type="file" id="import-file" accept=".json,application/json"></label></div>
           </div>
+          <div id="nsdr-manage"></div>
         </div>
       </div>
     </div>
@@ -308,20 +334,21 @@ td.r{white-space:nowrap}
 (() => {
 const INKS = ["lav","aqua","butter","mauve","pista","sable"];
 const fixInk = (p, i) => { if(!INKS.includes(p.ink)) p.ink = INKS[i % INKS.length]; return p; };
-const CAPS = [30,45,60,90], WARMS = [5,7,10];
+const CAPS = [5,15,30,45,60,90], WARMS = [5,7,10];
 const LS_KEY = "ultradien.v1";
 const IN_ARTIFACT = !!(window.claude && window.claude.use);
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
 const MIN = 60000;
-const blank = () => ({ projects:[], tasks:[], currentTaskId:null, settings:{cap:90, warm:7}, active:null, pause:null });
+const blank = () => ({ projects:[], tasks:[], currentTaskId:null, settings:{cap:90, warm:7, ritual:true, ambient:"off", ambStop:"bloc", ambVol:50, deepBudget:120}, mode:"deep", active:null, pause:null, chain:null, review:null, rite:null, dayEnd:null });
+const normalize = () => { S.settings = Object.assign(blank().settings, S.settings || {}); S.projects.forEach(fixInk); };
 
 let S = blank(), LOGS = {};
 let db = null, userId = null, mode = "local";
 const ui = { tab:"focus", weekOffset:0, filter:"all", showArchived:false, editing:null, menu:null, sort:"total" };
 
-function loadLocal(){ try{ const raw = localStorage.getItem(LS_KEY); if(raw){ const o = JSON.parse(raw); if(o.S){ S = Object.assign(blank(), o.S); S.projects.forEach(fixInk); } if(o.LOGS) LOGS = o.LOGS; } }catch(e){} }
+function loadLocal(){ try{ const raw = localStorage.getItem(LS_KEY); if(raw){ const o = JSON.parse(raw); if(o.S){ S = Object.assign(blank(), o.S); normalize(); } if(o.LOGS) LOGS = o.LOGS; } }catch(e){} }
 function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({S, LOGS})); }catch(e){} }
 
 /* Écritures : une à la fois par document, la plus récente gagne */
@@ -346,7 +373,7 @@ async function flush(docId){
   }
   inflight[docId] = false;
 }
-const stateBody = () => ({ updAt:S.updAt||0, lastExport:S.lastExport||null, projects:S.projects, tasks:S.tasks, currentTaskId:S.currentTaskId, settings:S.settings, active:S.active, pause:S.pause, v:1 });
+const stateBody = () => ({ updAt:S.updAt||0, lastExport:S.lastExport||null, projects:S.projects, tasks:S.tasks, currentTaskId:S.currentTaskId, settings:S.settings, active:S.active, pause:S.pause, chain:S.chain||null, review:S.review||null, rite:S.rite||null, mode:S.mode||"deep", dayEnd:S.dayEnd||null, v:1 });
 const saveState = () => { S.updAt = Date.now(); persist("state", stateBody()); };
 const monthKey = t => { const d = new Date(t); return `log-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`; };
 function addSession(sess){ const k = monthKey(sess.start); LOGS[k] = { sessions:[...((LOGS[k]||{}).sessions||[]), sess] }; persist(k, LOGS[k]); }
@@ -361,7 +388,7 @@ function totals(){
   const out = {}, ws = weekStart(0);
   for(const s of allSessions()){
     const o = out[s.taskId] || (out[s.taskId] = {total:0, week:0, blocks:0, recenters:0});
-    o.total += s.ms; o.blocks++; o.recenters += (s.recenters||0); if(s.start >= ws) o.week += s.ms;
+    o.total += s.ms; o.blocks++; o.recenters += (s.recenters||0); if(s.focus){ o.focus = (o.focus||0) + s.focus; o.rated = (o.rated||0) + 1; } if(s.start >= ws) o.week += s.ms;
   }
   return out;
 }
@@ -380,13 +407,65 @@ function chime(kind){
     o.connect(g).connect(actx.destination); o.start(t); o.stop(t+1.7); });
 }
 
-/* Actions */
+/* Actions — une « série » cumule les blocs enchaînés sans vraie pause ; la défocalisation arrive au plus tard à 90 min de série */
 const touch = o => { o.upd = Date.now(); return o; };
-function startBlock(){
+const SERIES_MAX = 90, RITE_MS = 45000;
+const RATINGS = ["Dispersée", "Correcte", "Concentrée", "En flow"];
+const seriesMs = () => S.chain ? S.chain.ms : 0;
+const pauseMinutes = total => total < 20*MIN ? 5 : Math.min(30, Math.max(10, Math.round(total/MIN/3)));
+const canChain = r => r && r.ms < 20*MIN && r.total < (SERIES_MAX - 5)*MIN;
+/* Mode léger : chrono libre, pause = 1/4 du temps travaillé (ratio des pauses systématiques de Biwer et al., 2023) */
+const flowBreak = ms => Math.min(30, Math.max(2, Math.round(ms/MIN/4)));
+const modeOf = s => s.mode || "deep";
+function dayTotals(){
+  const d0 = new Date(); d0.setHours(0,0,0,0);
+  const ss = allSessions().filter(s => s.start >= d0.getTime());
+  const deep = ss.filter(s => modeOf(s) === "deep").reduce((a,s) => a + s.ms, 0), light = ss.filter(s => modeOf(s) === "light").reduce((a,s) => a + s.ms, 0);
+  return { deep, light, blocks:ss.length };
+}
+function setMode(m){ S.mode = m; saveState(); renderPillow(); renderControls(); }
+function startLight(){
+  S.pause = null; S.rite = null; S.review = null; S.chain = null; S.dayEnd = null;
+  S.active = { id:uid(), taskId:S.currentTaskId, start:Date.now(), light:true, cap:0, warm:0, base:0, recenters:[], longChimed:false };
+  ambient.blockStart(); saveState(); render();
+}
+function lightPause(){
+  const a = S.active; if(!a || !a.light) return;
+  const end = Date.now(), ms = end - a.start; S.active = null; ambient.stop();
+  if(ms < MIN){ toast("Moins d'une minute : non enregistré."); saveState(); render(); return; }
+  addSession({ id:a.id, taskId:a.taskId, start:a.start, end, ms, recenters:a.recenters.length, mode:"light" });
+  const mins = flowBreak(ms);
+  S.pause = { start:end, minutes:mins, chimed:false, nsdr:false, nsdrHidden:false, light:true };
+  saveState(); render(); toast(`${fmt(ms)} de travail léger : pause de ${mins} min, calculée sur ton temps.`);
+}
+function endDay(){
+  const a = S.active;
+  if(a && a.light){ const end = Date.now(), ms = end - a.start; if(ms >= MIN) addSession({ id:a.id, taskId:a.taskId, start:a.start, end, ms, recenters:a.recenters.length, mode:"light" }); }
+  else if(a){ const end = Math.min(Date.now(), a.start + a.cap*MIN), ms = end - a.start; if(ms >= MIN) addSession({ id:a.id, taskId:a.taskId, start:a.start, end, ms, recenters:a.recenters.length, cap:a.cap, mode:"deep", chained:(a.base||0) > 0 }); }
+  S.active = null; S.rite = null; S.review = null; S.pause = null; S.chain = null; ambient.stop(); nsdrAudio.stop();
+  S.dayEnd = { at:Date.now(), closed:false }; saveState(); render();
+}
+function closeDay(){
+  const t = taskById(S.currentTaskId), v = ($("#next-step") || {}).value;
+  if(t && v !== undefined){ const n = v.trim(); if(n !== (t.next || "")){ t.next = n; touch(t); } }
+  S.dayEnd = Object.assign({}, S.dayEnd, { closed:true }); saveState(); render(); toast("Session close. Ta prochaine étape t'attendra ici.");
+}
+function beginBlock(){
   if(!S.currentTaskId){ toast("Choisis ou crée d'abord une tâche."); $("#add-name").focus(); return; }
+  unlockAudio(); S.dayEnd = null;
+  if(S.mode === "light") return startLight();
+  if(S.settings.ritual !== false && !S.chain){ S.pause = null; S.review = null; S.rite = { start:Date.now() }; saveState(); render(); return; }
+  startBlock();
+}
+function startBlock(){
+  if(!S.currentTaskId) return;
   unlockAudio();
-  S.pause = null;
-  S.active = { id:uid(), taskId:S.currentTaskId, start:Date.now(), cap:S.settings.cap, warm:S.settings.warm, recenters:[], warmChimed:false };
+  const base = seriesMs(), left = Math.floor(SERIES_MAX - base/MIN);
+  const cap = Math.max(1, Math.min(S.settings.cap, left));
+  const warm = (base > 0 || cap <= 15) ? 0 : Math.min(S.settings.warm, Math.floor(cap/3));
+  S.pause = null; S.rite = null; S.review = null;
+  S.active = { id:uid(), taskId:S.currentTaskId, start:Date.now(), cap, warm, base, recenters:[], warmChimed:false };
+  ambient.blockStart();
   saveState(); render();
 }
 function recenter(){
@@ -399,16 +478,33 @@ function recenter(){
 function endBlock(auto=false){
   const a = S.active; if(!a) return;
   const end = Math.min(Date.now(), a.start + a.cap*MIN), ms = end - a.start;
-  S.active = null;
-  if(ms >= MIN){
-    addSession({ id:a.id, taskId:a.taskId, start:a.start, end, ms, recenters:a.recenters.length, cap:a.cap });
-    S.pause = { start:end, minutes:Math.min(30, Math.max(10, Math.round(ms/MIN/3))), chimed:false };
-    if(auto) chime("end");
-    toast(auto ? `Plafond atteint : ${fmt(ms)} enregistrées.` : `${fmt(ms)} enregistrées sur « ${(taskById(a.taskId)||{}).name || "la tâche"} ».`);
-  } else toast("Bloc de moins d'une minute : non enregistré.");
+  S.active = null; ambient.stop();
+  if(ms < MIN){ toast("Bloc de moins d'une minute : non enregistré."); saveState(); render(); return; }
+  const sess = { id:a.id, taskId:a.taskId, start:a.start, end, ms, recenters:a.recenters.length, cap:a.cap, chained:(a.base||0) > 0, mode:"deep" };
+  addSession(sess);
+  const total = (a.base || 0) + ms;
+  S.chain = { ms:total };
+  S.review = { sid:a.id, month:monthKey(a.start), ms, total, end, auto, rating:null };
+  if(auto) chime("end");
   saveState(); render();
 }
-function cancelBlock(){ S.active = null; saveState(); render(); toast("Bloc annulé, rien n'a été enregistré."); }
+function rateBlock(n){
+  const r = S.review; if(!r) return;
+  r.rating = r.rating === n ? null : n;
+  const log = LOGS[r.month], s = log && (log.sessions||[]).find(x => x.id === r.sid);
+  if(s){ if(r.rating) s.focus = r.rating; else delete s.focus; persist(r.month, LOGS[r.month]); }
+  saveState(); renderControls();
+}
+function chainNext(){ if(!canChain(S.review)) return; startBlock(); }
+function takePause(){
+  const r = S.review, total = r ? r.total : seriesMs();
+  S.pause = { start:r ? r.end : Date.now(), minutes:pauseMinutes(total), chimed:false, nsdr:total >= 30*MIN, nsdrHidden:false };
+  S.review = null; S.chain = null;
+  saveState(); render();
+}
+function cancelBlock(){ S.active = null; ambient.stop(); saveState(); render(); toast("Bloc annulé, rien n'a été enregistré."); }
+function cancelRite(){ S.rite = null; saveState(); render(); }
+function stopPause(){ endDay(); }
 function extendPause(){ if(!S.pause) return; S.pause.minutes = Math.min(45, S.pause.minutes + 5); S.pause.chimed = false; saveState(); render(); }
 function addProject(name){
   name = name.trim(); if(!name) return null;
@@ -423,31 +519,149 @@ function addTask(name, projectId){
   saveState(); render(); toast(`Tâche « ${name} » ajoutée.`);
 }
 
+/* Son d'ambiance : bruit brun ou battements binauraux à 40 Hz, générés sur place (fonctionne hors ligne) */
+const ambient = (() => {
+  let nodes = null, timer = null;
+  function brownBuffer(){
+    const sr = actx.sampleRate, len = sr*20, buf = actx.createBuffer(2, len, sr);
+    for(let ch=0; ch<2; ch++){ const d = buf.getChannelData(ch); let last = 0;
+      for(let i=0; i<len; i++){ const w = Math.random()*2 - 1; last = (last + .02*w)/1.02; d[i] = last*3.2; }
+      const f = Math.floor(sr*.6); for(let i=0; i<f; i++){ const g = i/f; d[i] *= g; d[len-1-i] *= g; } }
+    return buf;
+  }
+  function start(kind){
+    stop(); if(!actx || kind === "off") return;
+    const vol = (S.settings.ambVol ?? 50)/100, out = actx.createGain(); out.gain.value = 0; out.connect(actx.destination);
+    out.gain.linearRampToValueAtTime(vol*.5, actx.currentTime + 1.5);
+    const srcs = [];
+    const noise = actx.createBufferSource(); noise.buffer = brownBuffer(); noise.loop = true;
+    const ng = actx.createGain(); ng.gain.value = kind === "brown" ? 1 : .25; noise.connect(ng).connect(out); noise.start(); srcs.push(noise);
+    if(kind === "b40"){
+      const merger = actx.createChannelMerger(2), tg = actx.createGain(); tg.gain.value = .35;
+      [[200,0],[240,1]].forEach(([f,ch]) => { const o = actx.createOscillator(); o.frequency.value = f; o.connect(merger, 0, ch); o.start(); srcs.push(o); });
+      merger.connect(tg).connect(out);
+    }
+    nodes = { out, srcs };
+  }
+  function stop(){
+    clearTimeout(timer); timer = null;
+    if(!nodes) return; const n = nodes; nodes = null;
+    try{ n.out.gain.cancelScheduledValues(actx.currentTime); n.out.gain.setTargetAtTime(0, actx.currentTime, .3); setTimeout(() => n.srcs.forEach(s => { try{ s.stop(); }catch(e){} }), 1500); }catch(e){}
+  }
+  function blockStart(){
+    const k = S.settings.ambient || "off"; if(k === "off") return;
+    start(k);
+    if(S.settings.ambStop === "5") timer = setTimeout(stop, 5*MIN);
+  }
+  return { start, stop, blockStart, playing:() => !!nodes, setVolume(v){ if(nodes) nodes.out.gain.setTargetAtTime(v/100*.5, actx.currentTime, .2); } };
+})();
+
+/* Séance NSDR : fichier audio choisi une fois et gardé sur cet appareil (jamais envoyé en ligne) */
+const media = (() => {
+  const open = () => new Promise((res, rej) => { const r = indexedDB.open("ultradien-media", 1); r.onupgradeneeded = () => r.result.createObjectStore("files"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+  const tx = async (mode, fn) => { const d = await open(); return new Promise((res, rej) => { const t = d.transaction("files", mode), st = t.objectStore("files"), q = fn(st); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); }); };
+  return { get:k => tx("readonly", st => st.get(k)), put:(k, v) => tx("readwrite", st => st.put(v, k)), del:k => tx("readwrite", st => st.delete(k)) };
+})();
+const nsdrAudio = (() => {
+  const el = document.createElement("audio"); el.preload = "metadata"; document.body.appendChild(el);
+  let url = null, info = null, loaded = false;
+  async function load(){
+    try{ const rec = await media.get("nsdr"); if(rec && rec.blob){ if(url) URL.revokeObjectURL(url); url = URL.createObjectURL(rec.blob); el.src = url; info = { name:rec.name, size:rec.blob.size }; } else info = null; }catch(e){ info = null; }
+    if(!info && !IN_ARTIFACT && /^https?:$/.test(location.protocol)){
+      try{ const r = await fetch("audio/nsdr.mp3"); if(r.ok){ const b = await r.blob(); if(url) URL.revokeObjectURL(url); url = URL.createObjectURL(b); el.src = url; info = { name:"Séance NSDR intégrée à l'appli", size:b.size, builtin:true }; } }catch(e){}
+    }
+    loaded = true;
+  }
+  async function save(file){ await media.put("nsdr", { blob:file, name:file.name }); await load(); }
+  async function remove(){ stop(); await media.del("nsdr"); if(url) URL.revokeObjectURL(url); url = null; el.removeAttribute("src"); info = null; }
+  function stop(){ try{ el.pause(); el.currentTime = 0; }catch(e){} }
+  el.addEventListener("timeupdate", () => { const p = $("#nsdr-prog"), t = $("#nsdr-time"); if(p && el.duration) p.value = el.currentTime/el.duration*100; if(t) t.textContent = `${clock(el.currentTime*1000)} / ${clock((el.duration||0)*1000)}`; });
+  el.addEventListener("play", () => renderNsdr()); el.addEventListener("pause", () => renderNsdr()); el.addEventListener("ended", () => { renderNsdr(); chime("rest"); });
+  return { el, load, save, remove, stop, info:() => info, ready:() => loaded };
+})();
+function nsdrPicker(id, label){ return `<label class="btn file-btn" for="${id}">${label}<input type="file" id="${id}" accept="audio/*,.mp3"></label>`; }
+function bindNsdrPicker(id){ const inp = document.getElementById(id); if(!inp) return; inp.onchange = async e => { const f = e.target.files[0]; e.target.value = ""; if(!f) return;
+  if(!/^audio\//.test(f.type) && !/\.mp3$/i.test(f.name)){ toast("Choisis un fichier audio (MP3)."); return; }
+  try{ await nsdrAudio.save(f); toast("Audio NSDR enregistré sur cet appareil."); renderNsdr(); if(ui.tab==="hist") renderHist(); }catch(err){ toast("Impossible d'enregistrer l'audio sur cet appareil (espace insuffisant ?)."); } }; }
+function renderNsdr(){
+  const box = $("#nsdr-box"); if(!box) return;
+  const pz = S.pause, el = nsdrAudio.el, playing = !el.paused && !el.ended;
+  if(!pz || !pz.nsdr || pz.nsdrHidden){ box.hidden = true; box.innerHTML = ""; if(!pz) nsdrAudio.stop(); return; }
+  box.hidden = false;
+  const info = nsdrAudio.info();
+  box.innerHTML = `<h3>Séance NSDR, en option</h3>
+    <p>Allongée ou assise, yeux fermés, 11 min de repos profond guidé. Huberman la conseille dans l'heure qui suit un long bloc ou une séance d'apprentissage.</p>
+    ${info ? `<div class="player"><button class="btn fill sage" id="nsdr-play" type="button">${playing ? ICON.pauseI : ICON.play}${playing ? "Pause" : (el.currentTime > 0 ? "Reprendre" : "Lancer la séance")}</button>
+        <input type="range" id="nsdr-prog" min="0" max="100" step=".1" value="${el.duration ? el.currentTime/el.duration*100 : 0}" aria-label="Avancement de la séance"><span class="num" id="nsdr-time">${clock(el.currentTime*1000)} / ${el.duration ? clock(el.duration*1000) : "11:00"}</span></div>`
+      : `<p class="muted">Choisis une fois le fichier MP3 de la séance : il reste sur cet appareil, même hors ligne.</p><div class="row">${nsdrPicker("nsdr-file", "Choisir le fichier audio")}</div>`}
+    <button class="ghost" id="nsdr-skip" type="button">Pas cette fois</button>`;
+  const play = $("#nsdr-play");
+  if(play) play.onclick = () => { if(el.paused){ el.play().catch(() => toast("Lecture impossible : touche à nouveau le bouton.")); const need = Math.ceil((Date.now() - pz.start)/MIN + (el.duration || 660)/60 - el.currentTime/60); if(pz.minutes < need){ pz.minutes = Math.min(60, need); pz.chimed = false; saveState(); renderPillow(); } } else el.pause(); };
+  const prog = $("#nsdr-prog"); if(prog) prog.oninput = () => { if(el.duration) el.currentTime = prog.value/100*el.duration; };
+  bindNsdrPicker("nsdr-file");
+  $("#nsdr-skip").onclick = () => { nsdrAudio.stop(); pz.nsdrHidden = true; saveState(); renderNsdr(); };
+}
+
 /* Carreau-horloge : carton piqué, fond torchon (deux paires de fils qui se croisent en losanges), épingles */
 const fresh = { pin:0 };
 function renderPillow(){
   const now = Date.now(), a = S.active, pz = S.pause, C = 190;
   const RO = 152, RM = 134, RI = 116, RC0 = 100, RC1 = 168;
   let total, doneMin, warmMin = 0, rest = false, phase, phaseT, big, sub, pins = [];
-  if(a){
-    total = a.cap; const el = now - a.start; doneMin = Math.min(total, el/MIN); warmMin = a.warm;
+  const r = S.review, de = S.dayEnd;
+  let lite = false;
+  if(a && a.light){
+    const el = now - a.start; lite = true;
+    total = Math.max(30, Math.ceil((el/MIN + 1)/15)*15); doneMin = el/MIN;
+    phase = "Travail léger"; phaseT = "lite-t"; big = clock(el);
+    sub = el >= 90*MIN ? "Plus de 90 min : pense à faire une vraie pause." : `Chrono libre. Pause méritée si tu t'arrêtes maintenant : ${flowBreak(el)} min.`;
+    pins = a.recenters.map(t => t/MIN);
+    document.title = `${clock(el)} · Léger — Ultradien`;
+  } else if(de && !a && !S.rite){
+    const d = dayTotals(); total = 30; doneMin = 0;
+    phase = "Session terminée"; phaseT = "ink-2"; big = fmt(d.deep + d.light);
+    sub = `Aujourd'hui, dont ${fmt(d.deep)} en profond et ${fmt(d.light)} en léger, sur ${d.blocks} bloc${d.blocks > 1 ? "s" : ""}.`;
+    document.title = "Session terminée — Ultradien";
+  } else if(S.rite){
+    const left = Math.max(0, RITE_MS - (now - S.rite.start));
+    total = Math.min(S.settings.cap, SERIES_MAX); doneMin = 0; warmMin = total <= 15 ? 0 : S.settings.warm;
+    phase = "Rituel d'entrée"; phaseT = "focus-t"; big = clock(left + 999);
+    sub = "Fixe un point devant toi, regard posé. Téléphone hors de portée.";
+    document.title = `${clock(left + 999)} · Rituel — Ultradien`;
+  } else if(a){
+    const base = (a.base || 0)/MIN, el = now - a.start;
+    total = base + a.cap; doneMin = Math.min(total, base + el/MIN); warmMin = a.warm;
     const inWarm = el < a.warm*MIN;
     phase = inWarm ? "Échauffement" : "Concentration"; phaseT = inWarm ? "warm-t" : "focus-t";
     big = clock(el);
-    sub = inWarm ? `Normal de flotter au début. Concentration dans ${Math.ceil((a.warm*MIN-el)/MIN)} min.` : `Plafond dans ${Math.ceil((a.cap*MIN-el)/MIN)} min. Tu peux t'arrêter avant.`;
-    pins = a.recenters.map(t => t/MIN);
+    sub = inWarm ? `Normal de flotter au début. Concentration dans ${Math.ceil((a.warm*MIN-el)/MIN)} min.`
+      : base ? `Série : ${fmt(a.base + el)} sur ${SERIES_MAX} min. Tu peux t'arrêter avant.`
+      : `Plafond dans ${Math.ceil((a.cap*MIN-el)/MIN)} min. Tu peux t'arrêter avant.`;
+    pins = a.recenters.map(t => base + t/MIN);
     document.title = `${clock(a.cap*MIN-el)} · ${phase} — Ultradien`;
+  } else if(r){
+    total = SERIES_MAX; doneMin = Math.min(SERIES_MAX, r.total/MIN);
+    phase = "Bloc terminé"; phaseT = "focus-t"; big = clock(r.ms);
+    sub = canChain(r) ? `Série : ${fmt(r.total)}. Enchaîne si ça coule, sinon pause.` : `Série : ${fmt(r.total)}. Place à la défocalisation.`;
+    document.title = "Bloc terminé — Ultradien";
   } else if(pz){
     total = pz.minutes; const el = now - pz.start; doneMin = Math.min(total, el/MIN); rest = true;
     const over = el >= pz.minutes*MIN;
     phase = over ? "Pause terminée" : "Défocalisation"; phaseT = "rest-t";
     big = over ? "0:00" : clock(pz.minutes*MIN - el);
-    sub = over ? "Prête pour un nouveau bloc." : `Pause de ${pz.minutes} min, loin de l'écran.`;
+    sub = over ? "Prête pour un nouveau bloc." : pz.light ? `Pause de ${pz.minutes} min, calculée sur ton temps de travail.` : `Pause de ${pz.minutes} min, loin de l'écran.`;
     document.title = over ? "Pause terminée — Ultradien" : `${big} · Pause — Ultradien`;
   } else {
-    total = S.settings.cap; doneMin = 0; warmMin = S.settings.warm;
+    total = S.settings.cap; doneMin = 0; warmMin = total <= 15 ? 0 : S.settings.warm;
     phase = "Prête"; phaseT = "ink-2"; big = `${S.settings.cap}:00`;
-    sub = taskById(S.currentTaskId) ? `Bloc de ${S.settings.cap} min au plus, dont ${S.settings.warm} d'échauffement.` : "Ajoute une tâche pour commencer.";
+    const t = taskById(S.currentTaskId), d = dayTotals(), budget = S.settings.deepBudget || 120;
+    if(S.mode === "light"){ total = 30; warmMin = 0; big = "0:00"; phase = "Prête, mode léger"; }
+    sub = !t ? "Ajoute une tâche pour commencer."
+      : t.next ? `Reprise : ${esc(t.next)}`
+      : S.mode === "light" ? "Chrono libre : la pause se calcule quand tu t'arrêtes."
+      : d.deep >= budget*MIN ? `Budget profond atteint (${fmt(d.deep)}). Passe en mode léger ?`
+      : total <= 15 ? `Démarrage doux : ${total} min, sans échauffement. L'important est de commencer.`
+      : `Bloc de ${total} min au plus. Profond aujourd'hui : ${fmt(d.deep)} sur ${fmt(budget*MIN)}.`;
     document.title = "Ultradien";
   }
   document.documentElement.style.setProperty("--phase-t", `var(--${phaseT})`);
@@ -477,22 +691,22 @@ function renderPillow(){
   if(full > 0){
     const wEnd = rest ? 0 : Math.min(full, Math.ceil(warmSteps));
     if(wEnd > 0) svg += lace(0, wEnd, "thr-warm");
-    if(full > wEnd) svg += lace(wEnd, full, rest ? "thr-rest" : "thr-focus");
+    if(full > wEnd) svg += lace(wEnd, full, rest ? "thr-rest" : lite ? "thr-lite" : "thr-focus");
   }
   // épingles debout toutes les 5 minutes : nacre si à venir, en couleur si travaillées
   for(let m=5; m<total; m+=5){
     const k = m/unit, [x,y] = P(RO+9, k), [xb,yb] = P(RO, k), worked = k <= done;
-    const col = worked ? (rest ? "rest" : (k <= warmSteps ? "warm" : "focus")) : "pearl";
+    const col = worked ? (rest ? "rest" : lite ? "lite" : (k <= warmSteps ? "warm" : "focus")) : "pearl";
     svg += `<line x1="${xb.toFixed(1)}" y1="${yb.toFixed(1)}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--ink-3)" stroke-width="1"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.4" fill="var(--${col})" stroke="var(--ink)" stroke-width=".8"/>`;
   }
   // épingle de travail au point courant
-  if(a || pz){ const [x,y] = P(RM, done); svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="var(--${rest ? "rest" : (done < warmSteps ? "warm" : "focus")})" stroke="var(--ink)" stroke-width="1.1"/>`; }
+  if(a || pz || r){ const [x,y] = P(RM, done); svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="var(--${rest ? "rest" : lite ? "lite" : (done < warmSteps ? "warm" : "focus")})" stroke="var(--ink)" stroke-width="1.1"/>`; }
   // épingles de recentrage
   pins.forEach((m,i) => { const k = Math.min(steps, m/unit), [x,y] = P(RI-14, k), [x2,y2] = P(RI+2, k);
     svg += `<g class="${i+1===fresh.pin ? "pin-new" : ""}"><line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="var(--ink-2)" stroke-width="1.2"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5.5" fill="var(--pin)" stroke="var(--ink)" stroke-width="1"/></g>`; });
   fresh.pin = 0;
   $("#pillow").innerHTML = `<svg viewBox="0 0 380 380" role="img" aria-label="${phase} : ${big}">${svg}</svg>
-    <div class="center"><div class="clock num">${big}</div><div class="phase">${phase}</div><div class="sub">${sub}</div></div>`;
+    <div class="center"><div class="clock num${/\s/.test(big) ? " small" : ""}">${big}</div><div class="phase">${phase}</div><div class="sub">${sub}</div></div>`;
 }
 
 const ICON = {
@@ -502,10 +716,25 @@ const ICON = {
   plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
   more:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>',
   edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
+  pauseI:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>',
 };
 function renderControls(){
-  const c = $("#controls");
-  if(S.active){
+  const c = $("#controls"), r = S.review;
+  const stopBtn = `<button class="ghost" id="b-stop">${ICON.stop.replace("<svg",'<svg width="12" height="12" style="vertical-align:-1px;margin-right:4px"')}Terminer la session</button>`;
+  if(S.active && S.active.light){
+    c.innerHTML = `<button class="btn fill rose" id="b-rec">${ICON.pin}Je me recentre <span class="kbd">R</span></button>
+      <button class="btn fill sage" id="b-lp">${ICON.pauseI}Faire une pause</button>${stopBtn}`;
+    $("#b-rec").onclick = recenter; $("#b-lp").onclick = lightPause; $("#b-stop").onclick = endDay;
+  } else if(S.dayEnd && !S.dayEnd.closed && !S.active && !S.rite){
+    const t = taskById(S.currentTaskId);
+    c.innerHTML = `<div class="dayend">${t ? `<label for="next-step">Prochaine étape pour « ${esc(t.name)} », pour reprendre sans effort</label>
+      <textarea id="next-step" maxlength="200" placeholder="Ex. : relire la règle du marfūʿ, puis faire l'exercice 3">${esc(t.next || "")}</textarea>` : ""}
+      <div class="controls"><button class="btn fill blue" id="b-close">Clore la session</button><button class="ghost" id="b-resume">Reprendre le travail</button></div></div>`;
+    $("#b-close").onclick = closeDay; $("#b-resume").onclick = () => { S.dayEnd = null; saveState(); render(); };
+  } else if(S.rite){
+    c.innerHTML = `<button class="btn fill blue" id="b-go">${ICON.play}Commencer maintenant</button><button class="ghost" id="b-x">Annuler</button>`;
+    $("#b-go").onclick = startBlock; $("#b-x").onclick = cancelRite;
+  } else if(S.active){
     c.innerHTML = `<button class="btn fill rose" id="b-rec">${ICON.pin}Je me recentre <span class="kbd">R</span></button>
       <button class="btn fill blue" id="b-end">${ICON.stop}Terminer le bloc</button>
       <button class="ghost" id="b-cancel">Annuler</button>`;
@@ -513,21 +742,51 @@ function renderControls(){
     const bc = $("#b-cancel");
     bc.onclick = () => { if(bc.dataset.arm) return cancelBlock(); bc.dataset.arm = 1; bc.textContent = "Confirmer l'annulation"; bc.style.color = "var(--danger)";
       setTimeout(()=>{ if(bc.isConnected){ delete bc.dataset.arm; bc.textContent = "Annuler"; bc.style.color = ""; } }, 4000); };
+  } else if(r){
+    const chain = canChain(r), next = Math.max(1, Math.min(S.settings.cap, Math.floor(SERIES_MAX - r.total/MIN)));
+    c.innerHTML = `<div class="review">
+      <div class="review-q">Comment était ta concentration ?</div>
+      <div class="rating" role="group" aria-label="Note de concentration">${RATINGS.map((l,i)=>`<button type="button" class="chip" data-rate="${i+1}" aria-pressed="${r.rating===i+1}">${l}</button>`).join("")}</div>
+      ${chain && r.rating === 4 ? `<p class="hint">Tu es en flow : enchaîne tant que ça coule.</p>` : chain ? `<p class="hint">Bloc court : tu peux enchaîner sans pause, ou en allonger la durée ci-dessous.</p>` : ""}
+      <div class="controls">${chain ? `<button class="btn fill blue" id="b-chain">${ICON.play}Enchaîner ${next} min</button>` : ""}
+        <button class="btn fill sage" id="b-pause">Pause de ${pauseMinutes(r.total)} min</button>${stopBtn}</div></div>`;
+    c.querySelectorAll("[data-rate]").forEach(b => b.onclick = () => rateBlock(+b.dataset.rate));
+    if(chain) $("#b-chain").onclick = chainNext;
+    $("#b-pause").onclick = takePause; $("#b-stop").onclick = endDay;
   } else if(S.pause){
     const over = Date.now() - S.pause.start >= S.pause.minutes*MIN;
     c.innerHTML = `<button class="btn fill blue" id="b-start">${ICON.play}${over ? "Nouveau bloc" : "Reprendre maintenant"}</button>
-      ${over ? "" : `<button class="btn fill sage" id="b-ext">${ICON.plus}5 min de pause</button>`}`;
-    $("#b-start").onclick = startBlock; if(!over) $("#b-ext").onclick = extendPause;
+      ${over ? "" : `<button class="btn fill sage" id="b-ext">${ICON.plus}5 min de pause</button>`}${stopBtn}`;
+    $("#b-start").onclick = beginBlock; if(!over) $("#b-ext").onclick = extendPause; $("#b-stop").onclick = endDay;
   } else {
-    c.innerHTML = `<button class="btn fill blue" id="b-start" ${S.currentTaskId?"":"disabled"}>${ICON.play}Démarrer le bloc <span class="kbd">Espace</span></button>`;
-    $("#b-start").onclick = startBlock;
+    c.innerHTML = `<button class="btn fill blue" id="b-start" ${S.currentTaskId?"":"disabled"}>${ICON.play}${S.mode === "light" ? "Démarrer le chrono" : "Démarrer le bloc"} <span class="kbd">Espace</span></button>`;
+    $("#b-start").onclick = beginBlock;
   }
   $("#rest-note").hidden = !S.pause;
-  const lock = !!S.active;
-  $("#settings").innerHTML = `<span>Plafond<span class="seg">${CAPS.map(v=>`<button type="button" data-cap="${v}" aria-pressed="${S.settings.cap===v}" ${lock?"disabled":""}>${v}</button>`).join("")}</span>min</span>
-    <span>Échauffement<span class="seg">${WARMS.map(v=>`<button type="button" data-warm="${v}" aria-pressed="${S.settings.warm===v}" ${lock?"disabled":""}>${v}</button>`).join("")}</span>min</span>`;
-  $("#settings").querySelectorAll("[data-cap]").forEach(b=>b.onclick=()=>{ S.settings.cap = +b.dataset.cap; saveState(); renderPillow(); renderControls(); });
-  $("#settings").querySelectorAll("[data-warm]").forEach(b=>b.onclick=()=>{ S.settings.warm = +b.dataset.warm; saveState(); renderPillow(); renderControls(); });
+  renderNsdr();
+  const lock = !!(S.active || S.rite), st = S.settings, short = st.cap <= 15, light = S.active ? !!S.active.light : S.mode === "light";
+  const amb = [["off","Aucune"],["brown","Bruit brun"],["b40","40 Hz"]];
+  const budgets = [60,120,180,240];
+  $("#settings").innerHTML = `<div class="set-row"><span>Mode<span class="seg">${[["deep","Profond"],["light","Léger"]].map(([k,l])=>`<button type="button" data-mode-set="${k}" aria-pressed="${(light?"light":"deep")===k}" ${lock?"disabled":""}>${l}</button>`).join("")}</span></span>
+      ${!light ? `<span>Budget profond<span class="seg">${budgets.map(v=>`<button type="button" data-budget="${v}" aria-pressed="${(st.deepBudget||120)===v}">${v/60} h</button>`).join("")}</span>par jour</span>` : ""}</div>
+    ${light ? `<p class="hint">Mode léger : chrono qui monte, sans plafond ni rituel. À l'arrêt, la pause vaut 1/4 du temps travaillé.</p>` : `<div class="set-row"><span>Bloc<span class="seg">${CAPS.map(v=>`<button type="button" data-cap="${v}" aria-pressed="${st.cap===v}" ${lock?"disabled":""}>${v}</button>`).join("")}</span>min</span>
+      <span>Échauffement${short ? ` <em class="muted">aucun en démarrage doux</em>` : `<span class="seg">${WARMS.map(v=>`<button type="button" data-warm="${v}" aria-pressed="${st.warm===v}" ${lock?"disabled":""}>${v}</button>`).join("")}</span>min`}</span></div>`}
+    <div class="set-row">${!light ? `<button type="button" class="chip" id="opt-rite" aria-pressed="${st.ritual !== false}">Rituel d'entrée 45 s</button>` : ""}
+      <span>Ambiance<span class="seg">${amb.map(([k,l])=>`<button type="button" data-amb="${k}" aria-pressed="${(st.ambient||"off")===k}">${l}</button>`).join("")}</span></span>
+      ${st.ambient && st.ambient !== "off" ? `<span class="seg" aria-label="Durée du son">${[["5","5 premières min"],["bloc","Tout le bloc"]].map(([k,l])=>`<button type="button" data-amb-stop="${k}" aria-pressed="${(st.ambStop||"bloc")===k}">${l}</button>`).join("")}</span>
+      <label class="vol">Volume<input type="range" id="amb-vol" min="5" max="100" value="${st.ambVol ?? 50}"></label>` : ""}</div>
+    ${st.ambient === "b40" ? `<p class="hint">40 Hz : à écouter au casque, l'effet vient de l'écart entre les deux oreilles.</p>` : ""}
+    ${!S.active && !S.rite && !r && !light ? `<p class="hint">Forte résistance à démarrer ? Choisis 5 min : l'important est de commencer.</p>` : ""}`;
+  const set = (k, v) => { st[k] = v; saveState(); renderPillow(); renderControls(); };
+  $("#settings").querySelectorAll("[data-cap]").forEach(b=>b.onclick=()=>set("cap", +b.dataset.cap));
+  $("#settings").querySelectorAll("[data-warm]").forEach(b=>b.onclick=()=>set("warm", +b.dataset.warm));
+  const rt = $("#opt-rite"); if(rt) rt.onclick = () => set("ritual", st.ritual === false);
+  $("#settings").querySelectorAll("[data-mode-set]").forEach(b=>b.onclick=()=>setMode(b.dataset.modeSet));
+  $("#settings").querySelectorAll("[data-budget]").forEach(b=>b.onclick=()=>set("deepBudget", +b.dataset.budget));
+  $("#settings").querySelectorAll("[data-amb]").forEach(b=>b.onclick=()=>{ unlockAudio(); const k = b.dataset.amb; set("ambient", k);
+    if(S.active){ if(k === "off") ambient.stop(); else ambient.start(k); } else if(k !== "off"){ ambient.start(k); setTimeout(() => { if(!S.active) ambient.stop(); }, 4000); toast("Aperçu de 4 secondes. Le son démarrera avec le bloc."); } else ambient.stop(); });
+  $("#settings").querySelectorAll("[data-amb-stop]").forEach(b=>b.onclick=()=>set("ambStop", b.dataset.ambStop));
+  const vol = $("#amb-vol"); if(vol){ vol.oninput = () => ambient.setVolume(+vol.value); vol.onchange = () => { st.ambVol = +vol.value; saveState(); }; }
 }
 
 /* Tâches */
@@ -568,21 +827,23 @@ function renderGroups(){
       ${g.p && !editP ? `<button class="icon-btn" data-edit-p="${g.p.id}" aria-label="Renommer ${esc(g.p.name)}">${ICON.edit}</button>` : ""}</div>
       ${g.ts.map(t=>{ const o = T[t.id]||{total:0,week:0}, w = o.total ? Math.max(3, o.total/max*96) : 0, isCur = t.id===cur, editT = ui.editing==="t:"+t.id;
         return `<div class="task ${isCur?"current":""}" data-task="${t.id}" ${editT?"":`tabindex="0" role="button" aria-pressed="${isCur}"`}>
-          ${editT ? `<input class="input" data-rename-t="${t.id}" value="${esc(t.name)}" maxlength="80" aria-label="Renommer la tâche">` : `<span class="task-name">${esc(t.name)}${t.archived?' <span class="task-week">(archivée)</span>':""}</span>`}
+          ${editT ? `<input class="input" data-rename-t="${t.id}" value="${esc(t.name)}" maxlength="80" aria-label="Renommer la tâche">` : `<span class="task-name">${esc(t.name)}${t.mode==="light"?' <span class="badge">léger</span>':""}${t.archived?' <span class="task-week">(archivée)</span>':""}</span>`}
           <span class="task-time num">${o.total ? fmt(o.total) : "—"}${o.week ? `<br><span class="task-week">${fmt(o.week)} cette sem.</span>` : ""}</span>
           <button class="icon-btn" data-menu="${t.id}" aria-label="Options de ${esc(t.name)}" aria-expanded="${ui.menu===t.id}">${ICON.more}</button>
           <div class="thread">${w ? `<i style="width:${w}%;--c:var(--${ink}-t)"></i>` : ""}</div></div>
           ${ui.menu===t.id ? `<div class="menu"><label for="mv-${t.id}">Projet</label><select class="select" id="mv-${t.id}" data-move="${t.id}">${projOptions(t.projectId)}</select>
-            <button class="ghost" data-edit-t="${t.id}">Renommer</button><button class="ghost" data-arch="${t.id}">${t.archived?"Désarchiver":"Archiver"}</button></div>` : ""}`; }).join("")}</div>`;
+            <label for="md-${t.id}">Mode</label><select class="select" id="md-${t.id}" data-mode="${t.id}"><option value="deep" ${(t.mode||"deep")==="deep"?"selected":""}>Profonde</option><option value="light" ${t.mode==="light"?"selected":""}>Légère</option></select>
+            <button class="ghost" data-edit-t="${t.id}">Renommer</button><p class="hint" style="text-align:left;flex-basis:100%">Profonde ou légère ? Le test de Cal Newport : combien de mois pour former un jeune diplômé à cette tâche ? Quelques semaines suffisent : elle est légère.</p><button class="ghost" data-arch="${t.id}">${t.archived?"Désarchiver":"Archiver"}</button></div>` : ""}`; }).join("")}</div>`;
   }).join("");
   G.querySelectorAll("[data-task]").forEach(el=>{
-    const pick = e => { if(e.target.closest("button,select,input")) return; if(S.active){ toast("Termine le bloc en cours pour changer de tâche."); return; } S.currentTaskId = el.dataset.task; saveState(); render(); };
+    const pick = e => { if(e.target.closest("button,select,input")) return; if(S.active){ toast("Termine le bloc en cours pour changer de tâche."); return; } S.currentTaskId = el.dataset.task; S.mode = (taskById(S.currentTaskId)||{}).mode || "deep"; saveState(); render(); };
     el.onclick = pick; el.onkeydown = e => { if((e.key==="Enter"||e.key===" ") && e.target===el){ e.preventDefault(); pick(e); } };
   });
   G.querySelectorAll("[data-menu]").forEach(b=>b.onclick=()=>{ ui.menu = ui.menu===b.dataset.menu ? null : b.dataset.menu; renderGroups(); });
   G.querySelectorAll("[data-move]").forEach(s=>s.onchange=()=>{ const t = taskById(s.dataset.move);
     if(s.value==="__new"){ ui.pendingMove = t.id; showNewProj(); return; }
     t.projectId = s.value || null; touch(t); ui.menu = null; saveState(); render(); });
+  G.querySelectorAll("[data-mode]").forEach(s=>s.onchange=()=>{ const t = taskById(s.dataset.mode); t.mode = s.value; touch(t); if(t.id === S.currentTaskId && !S.active) S.mode = t.mode; saveState(); render(); });
   G.querySelectorAll("[data-arch]").forEach(b=>b.onclick=()=>{ const t = taskById(b.dataset.arch);
     if(S.active && S.active.taskId===t.id){ toast("Cette tâche est en cours."); return; }
     t.archived = !t.archived; touch(t); if(t.archived && S.currentTaskId===t.id) S.currentTaskId = (S.tasks.find(x=>!x.archived)||{}).id || null;
@@ -604,7 +865,12 @@ function renderHist(){
   const today = ss.filter(s=>s.start>=d0.getTime()).reduce((a,s)=>a+s.ms,0);
   const week = ss.filter(s=>s.start>=weekStart(0)), wsum = week.reduce((a,s)=>a+s.ms,0);
   const avg = week.length ? (week.reduce((a,s)=>a+(s.recenters||0),0)/week.length).toFixed(1).replace(".",",") : "0";
-  $("#summary").innerHTML = `<span><b class="num">${fmt(today)}</b>aujourd'hui</span><span><b class="num">${fmt(wsum)}</b>cette semaine, ${week.length} bloc${week.length>1?"s":""}</span><span><b class="num">${avg}</b>recentrages par bloc</span><span><b class="num">${fmt(ss.reduce((a,s)=>a+s.ms,0))}</b>depuis le début</span>`;
+  const dd = dayTotals(), wDeep = week.filter(s=>modeOf(s)==="deep").reduce((a,s)=>a+s.ms,0), wLight = wsum - wDeep;
+  $("#summary").innerHTML = `<span><b class="num">${fmt(dd.deep)}</b>de profond aujourd'hui</span><span><b class="num">${fmt(wDeep)}</b>de profond cette semaine</span><span><b class="num">${fmt(wLight)}</b>de léger cette semaine</span><span><b class="num">${fmt(ss.reduce((a,s)=>a+s.ms,0))}</b>depuis le début</span>`;
+  const nm = $("#nsdr-manage"), ni = nsdrAudio.info();
+  if(nm){ nm.innerHTML = `<p>Audio de la séance NSDR sur cet appareil : ${ni ? `<b>${esc(ni.name)}</b> (${Math.round(ni.size/1048576)} Mo).` : "aucun pour l'instant."} Il n'est jamais envoyé en ligne : charge-le sur chaque appareil.</p>
+    <div class="row">${nsdrPicker("nsdr-file2", ni ? "Remplacer l'audio" : "Choisir l'audio NSDR")}${ni ? `<button class="ghost" id="nsdr-del" type="button">Retirer de cet appareil</button>` : ""}</div>`;
+    bindNsdrPicker("nsdr-file2"); const d = $("#nsdr-del"); if(d) d.onclick = async () => { await nsdrAudio.remove(); toast("Audio retiré de cet appareil."); renderHist(); }; }
   $("#last-export").textContent = S.lastExport ? `Dernière sauvegarde : ${new Date(S.lastExport).toLocaleDateString("fr-FR",{day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"})}` : "Aucune sauvegarde exportée pour l'instant";
   const off = ui.weekOffset, start = weekStart(off), days = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
   $("#week-title").textContent = off===0 ? "Cette semaine" : off===-1 ? "Semaine dernière" : `Semaine du ${new Date(start).toLocaleDateString("fr-FR",{day:"numeric",month:"long"})}`;
@@ -637,15 +903,15 @@ function renderHist(){
   const rows = S.tasks.filter(t=>T[t.id]).filter(t=> ui.filter==="all" || (ui.filter==="none" ? !projById(t.projectId) : t.projectId===ui.filter));
   rows.sort((a,b)=> ui.sort==="name" ? a.name.localeCompare(b.name,"fr") : (T[b.id][ui.sort]||0) - (T[a.id][ui.sort]||0));
   const th = (k,l,cls="") => `<th class="${cls}" aria-sort="${ui.sort===k ? (k==="name"?"ascending":"descending") : "none"}"><button data-sort="${k}">${l}</button></th>`;
-  $("#totals").innerHTML = `<thead><tr>${th("name","Tâche")}<th class="hide-sm">Projet</th>${th("total","Total","r")}${th("week","Semaine","r")}${th("blocks","Blocs","r hide-sm")}<th class="r hide-sm">Recentrages par bloc</th></tr></thead><tbody>` +
+  $("#totals").innerHTML = `<thead><tr>${th("name","Tâche")}<th class="hide-sm">Projet</th>${th("total","Total","r")}${th("week","Semaine","r")}${th("blocks","Blocs","r hide-sm")}<th class="r hide-sm">Recentrages par bloc</th><th class="hide-sm">Concentration moy.</th></tr></thead><tbody>` +
     (rows.length ? rows.map(t=>{ const o = T[t.id], p = projById(t.projectId);
-      return `<tr><td><b>${esc(t.name)}</b></td><td class="hide-sm"><span style="display:inline-flex;gap:7px;align-items:center"><i class="pinhead" style="--c:var(--${p?p.ink:"none"})"></i>${esc(p?p.name:"Sans projet")}</span></td><td class="r num"><b>${fmt(o.total)}</b></td><td class="r num">${o.week?fmt(o.week):"—"}</td><td class="r num hide-sm">${o.blocks}</td><td class="r num hide-sm">${(o.recenters/o.blocks).toFixed(1).replace(".",",")}</td></tr>`; }).join("")
-    : `<tr><td colspan="6" style="color:var(--ink-2);text-align:center;padding:18px">Le temps apparaîtra ici après ton premier bloc terminé.</td></tr>`) + "</tbody>";
+      return `<tr><td><b>${esc(t.name)}</b></td><td class="hide-sm"><span style="display:inline-flex;gap:7px;align-items:center"><i class="pinhead" style="--c:var(--${p?p.ink:"none"})"></i>${esc(p?p.name:"Sans projet")}</span></td><td class="r num"><b>${fmt(o.total)}</b></td><td class="r num">${o.week?fmt(o.week):"—"}</td><td class="r num hide-sm">${o.blocks}</td><td class="r num hide-sm">${(o.recenters/o.blocks).toFixed(1).replace(".",",")}</td><td class="hide-sm">${o.rated ? RATINGS[Math.round(o.focus/o.rated)-1] : "—"}</td></tr>`; }).join("")
+    : `<tr><td colspan="7" style="color:var(--ink-2);text-align:center;padding:18px">Le temps apparaîtra ici après ton premier bloc terminé.</td></tr>`) + "</tbody>";
   $("#totals").querySelectorAll("[data-sort]").forEach(b=>b.onclick=()=>{ ui.sort = b.dataset.sort; renderHist(); });
   const last = ss.slice(-12).reverse();
-  $("#log").innerHTML = `<thead><tr><th>Date</th><th>Tâche</th><th class="r">Durée</th><th class="r hide-sm">Recentrages</th></tr></thead><tbody>` +
-    (last.length ? last.map(s=>{ const d = new Date(s.start); return `<tr><td class="num" style="white-space:nowrap">${d.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})}, ${d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</td><td>${esc((taskById(s.taskId)||{name:"Tâche supprimée"}).name)}</td><td class="r num">${fmt(s.ms)}</td><td class="r num hide-sm">${s.recenters||0}</td></tr>`; }).join("")
-    : `<tr><td colspan="4" style="color:var(--ink-2);text-align:center;padding:18px">Aucun bloc pour l'instant.</td></tr>`) + "</tbody>";
+  $("#log").innerHTML = `<thead><tr><th>Date</th><th>Tâche</th><th class="hide-sm">Mode</th><th class="r">Durée</th><th class="r hide-sm">Recentrages</th><th>Concentration</th></tr></thead><tbody>` +
+    (last.length ? last.map(s=>{ const d = new Date(s.start); return `<tr><td class="num" style="white-space:nowrap">${d.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})}, ${d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</td><td>${esc((taskById(s.taskId)||{name:"Tâche supprimée"}).name)}</td><td class="hide-sm">${modeOf(s)==="light"?"Léger":"Profond"}</td><td class="r num">${fmt(s.ms)}</td><td class="r num hide-sm">${s.recenters||0}</td><td>${s.focus ? RATINGS[s.focus-1] : "—"}</td></tr>`; }).join("")
+    : `<tr><td colspan="6" style="color:var(--ink-2);text-align:center;padding:18px">Aucun bloc pour l'instant.</td></tr>`) + "</tbody>";
 }
 
 /* Sauvegarde : export et import avec fusion */
@@ -699,12 +965,17 @@ function setStatus(err){
 }
 function render(){ renderPicker(); renderPillow(); renderControls(); renderGroups(); renderAddProj(); if(ui.tab==="hist") renderHist(); }
 function tick(){
+  if(S.rite){ if(Date.now() - S.rite.start >= RITE_MS){ chime("warm"); startBlock(); return; } renderPillow(); return; }
+  if(S.review && Date.now() - S.review.end > 5*MIN){ takePause(); return; }
+  if(S.dayEnd && S.dayEnd.at < new Date().setHours(0,0,0,0)){ S.dayEnd = null; saveState(); render(); return; }
+  if(S.active && S.active.light){ const el = Date.now() - S.active.start; if(!S.active.longChimed && el >= 90*MIN){ S.active.longChimed = true; chime("end"); saveLocal(); } renderPillow(); return; }
   if(S.active){
     const el = Date.now() - S.active.start;
     if(!S.active.warmChimed && el >= S.active.warm*MIN){ S.active.warmChimed = true; chime("warm"); saveLocal(); }
     if(el >= S.active.cap*MIN){ endBlock(true); return; }
     renderPillow();
   } else if(S.pause){
+    if(Date.now() - S.pause.start >= (S.pause.minutes + 60)*MIN){ S.pause = null; saveState(); render(); return; }
     if(Date.now() - S.pause.start >= S.pause.minutes*MIN && !S.pause.chimed){ S.pause.chimed = true; chime("rest"); saveState(); renderControls(); }
     renderPillow();
   }
@@ -717,7 +988,7 @@ $("#tab-hist").onclick = () => showTab("hist");
 $("#status").onclick = () => { showTab("hist"); $("#backup-sec").scrollIntoView({behavior:"smooth", block:"start"}); };
 $("#week-prev").onclick = () => { ui.weekOffset--; renderHist(); };
 $("#week-next").onclick = () => { if(ui.weekOffset < 0){ ui.weekOffset++; renderHist(); } };
-$("#task-pick").onchange = e => { if(e.target.value){ S.currentTaskId = e.target.value; saveState(); render(); } };
+$("#task-pick").onchange = e => { if(e.target.value){ S.currentTaskId = e.target.value; S.mode = (taskById(S.currentTaskId)||{}).mode || "deep"; saveState(); render(); } };
 $("#add-proj").onchange = e => { if(e.target.value==="__new"){ ui.pendingMove = null; showNewProj(); } };
 $("#add-form").onsubmit = e => { e.preventDefault(); const n = $("#add-name").value; if(!n.trim()){ $("#add-name").focus(); return; }
   const p = $("#add-proj").value; addTask(n, p==="__new" ? null : p); $("#add-name").value = ""; $("#add-name").focus(); };
@@ -729,13 +1000,14 @@ $("#newproj-cancel").onclick = () => { $("#newproj-form").hidden = true; ui.pend
 $("#archived-toggle").onclick = () => { ui.showArchived = !ui.showArchived; renderGroups(); };
 document.addEventListener("keydown", e => {
   if(e.target.closest("input,select,textarea") || e.metaKey || e.ctrlKey || e.altKey || ui.tab!=="focus") return;
-  if(e.code==="Space" && !e.target.closest("button,[role=button],label")){ e.preventDefault(); if(!S.active) startBlock(); }
+  if(e.code==="Space" && !e.target.closest("button,[role=button],label")){ e.preventDefault(); if(!S.active && !S.rite && !S.review && !(S.dayEnd && !S.dayEnd.closed)) beginBlock(); }
   if((e.key==="r"||e.key==="R") && S.active){ e.preventDefault(); recenter(); }
 });
 document.addEventListener("pointerdown", unlockAudio, {once:true});
 let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(()=>{ if(ui.tab==="hist") renderHist(); }, 200); });
 
 loadLocal(); setStatus(); render();
+nsdrAudio.load().then(() => { renderNsdr(); if(ui.tab === "hist") renderHist(); });
 setInterval(tick, 1000);
 document.addEventListener("visibilitychange", () => { if(!document.hidden) tick(); });
 
@@ -796,7 +1068,8 @@ function mergeRemoteState(r){
   S.projects = mergeById(S.projects, r.projects); S.projects.forEach(fixInk);
   S.tasks = mergeById(S.tasks, r.tasks);
   if((r.updAt || 0) > (S.updAt || 0)){
-    S.settings = r.settings || S.settings; S.active = r.active || null; S.pause = r.pause || null;
+    S.settings = Object.assign(blank().settings, r.settings || S.settings); S.active = r.active || null; S.pause = r.pause || null;
+    S.chain = r.chain || null; S.review = r.review || null; S.rite = r.rite || null; S.mode = r.mode || S.mode; S.dayEnd = r.dayEnd || null;
     S.currentTaskId = r.currentTaskId || S.currentTaskId; S.updAt = r.updAt;
   }
   const le = Math.max(S.lastExport || 0, r.lastExport || 0); S.lastExport = le || null;
@@ -896,7 +1169,7 @@ if(IN_ARTIFACT) (async () => {
       }
       for(const doc of snap.docs){
         if(!doc.exists) continue; const body = doc.data();
-        if(doc.id==="state"){ if(!inflight.state && !pending.state){ S = Object.assign(blank(), JSON.parse(JSON.stringify(body))); delete S.v; S.projects.forEach(fixInk); } }
+        if(doc.id==="state"){ if(!inflight.state && !pending.state){ S = Object.assign(blank(), JSON.parse(JSON.stringify(body))); delete S.v; normalize(); } }
         else if(doc.id.startsWith("log-") && !inflight[doc.id] && !pending[doc.id]) LOGS[doc.id] = JSON.parse(JSON.stringify(body));
       }
       saveLocal();
