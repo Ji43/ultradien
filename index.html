@@ -605,12 +605,19 @@ function addTask(name, projectId){
 /* Son d'ambiance : bruit brun ou battements binauraux à 40 Hz, générés sur place (fonctionne hors ligne) */
 const ambient = (() => {
   let nodes = null, timer = null;
+  // Bruit brun bouclable sans couture : on génère un peu plus long, puis on fond la fin dans le début
+  // (fondu à puissance constante) pour que le dernier échantillon enchaîne exactement sur le premier.
+  let cached = null;
   function brownBuffer(){
-    const sr = actx.sampleRate, len = sr*20, buf = actx.createBuffer(2, len, sr);
-    for(let ch=0; ch<2; ch++){ const d = buf.getChannelData(ch); let last = 0;
-      for(let i=0; i<len; i++){ const w = Math.random()*2 - 1; last = (last + .02*w)/1.02; d[i] = last*3.2; }
-      const f = Math.floor(sr*.6); for(let i=0; i<f; i++){ const g = i/f; d[i] *= g; d[len-1-i] *= g; } }
-    return buf;
+    if(cached && cached.sampleRate === actx.sampleRate) return cached;
+    const sr = actx.sampleRate, len = sr*30, F = sr*3, buf = actx.createBuffer(2, len, sr);
+    for(let ch=0; ch<2; ch++){ const a = new Float32Array(len + F); let last = 0, mean = 0;
+      for(let i=0; i<len + F; i++){ const w = Math.random()*2 - 1; last = (last + .02*w)/1.02; a[i] = last*3.2; mean += a[i]; }
+      mean /= len + F; for(let i=0; i<len + F; i++) a[i] -= mean;
+      const d = buf.getChannelData(ch);
+      for(let i=0; i<len; i++) d[i] = a[i];
+      for(let i=0; i<F; i++){ const t = i/F; d[i] = a[i]*Math.sqrt(t) + a[len + i]*Math.sqrt(1 - t); } }
+    return cached = buf;
   }
   function start(kind){
     stop(); if(!actx || kind === "off") return;
@@ -878,7 +885,7 @@ function renderControls(){
   const rt = $("#opt-rite"); if(rt) rt.onclick = () => set("ritual", st.ritual === false);
   on("[data-amb]", b => { unlockAudio(); const k = b.dataset.amb; set("ambient", k);
     if(S.active){ if(k === "off") ambient.stop(); else ambient.start(k); }
-    else if(k !== "off"){ ambient.start(k); setTimeout(() => { if(!S.active) ambient.stop(); }, 4000); toast("Aperçu de 4 secondes. Le son démarrera avec le bloc."); }
+    else if(k !== "off"){ ambient.start(k); clearTimeout(ui.ambPrev); ui.ambPrev = setTimeout(() => { if(!S.active) ambient.stop(); }, 4000); toast("Aperçu de 4 secondes. Le son démarrera avec le bloc."); }
     else ambient.stop(); });
   const vol = $("#amb-vol"); if(vol){ vol.oninput = () => ambient.setVolume(+vol.value); vol.onchange = () => { st.ambVol = +vol.value; saveState(); }; }
 }
@@ -1121,15 +1128,23 @@ document.addEventListener("visibilitychange", () => { if(!document.hidden) tick(
 const CFG = window.ULTRADIEN_CONFIG || {};
 const SB = String(CFG.supabaseUrl || "").trim().replace(/\/+$/, ""), KEY = String(CFG.supabaseAnonKey || "").trim();
 const CONFIGURED = /^https?:\/\//.test(SB) && KEY.length > 20;
-const SKEY = "ultradien.session", DKEY = "ultradien.dirty", LKEY = "ultradien.lastSync";
-let session = null, dirty = new Set(), syncing = false, syncErr = "", syncTimer = null, lastSync = 0;
+const SKEY = "ultradien.session", DKEY = "ultradien.dirty", LKEY = "ultradien.lastSync", KKEY = "ultradien.known";
+let session = null, dirty = new Set(), syncing = false, syncErr = "", syncTimer = null, lastSync = 0, known = {}, again = false;
+try{ known = JSON.parse(localStorage.getItem(KKEY) || "{}") || {}; }catch(e){}
 try{ session = JSON.parse(localStorage.getItem(SKEY) || "null"); }catch(e){}
 try{ dirty = new Set(JSON.parse(localStorage.getItem(DKEY) || "[]")); }catch(e){}
 try{ lastSync = +localStorage.getItem(LKEY) || 0; }catch(e){}
 const store = (k, v) => { try{ v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v); }catch(e){} };
 const saveDirty = () => store(DKEY, JSON.stringify([...dirty]));
+const saveKnown = () => store(KKEY, JSON.stringify(known));
 
-onPersist = id => { dirty.add(id); saveDirty(); setStatus(); scheduleSync(1500); };
+/* Quand synchroniser : seulement quand c'est utile.
+   - envoi : 30 s après la dernière modification (les rafales sont groupées), et tout de suite quand on quitte l'appli ;
+   - réception : à l'ouverture, au retour sur l'appli après 5 min d'absence, au retour du réseau, ou sur demande ;
+   - chaque synchro commence par une petite requête (identifiants et dates seulement) : les contenus ne sont
+     téléchargés que pour les documents modifiés ailleurs. Aucune interrogation périodique. */
+const PUSH_DELAY = 30000, STALE = 5*60000;
+onPersist = id => { dirty.add(id); saveDirty(); setStatus(); scheduleSync(PUSH_DELAY); };
 function scheduleSync(ms){ clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, ms); }
 
 /* JSON canonique : Postgres réordonne les clés, on compare à clés triées */
@@ -1145,7 +1160,7 @@ function keepSession(j){
   session = { access:j.access_token, refresh:j.refresh_token, exp:Date.now() + ((j.expires_in || 3600) - 90)*1000, email:(j.user && j.user.email) || (session && session.email) || "" };
   store(SKEY, JSON.stringify(session));
 }
-function dropSession(){ session = null; store(SKEY, null); }
+function dropSession(){ session = null; store(SKEY, null); known = {}; saveKnown(); }
 async function accessToken(force){
   if(!session) return null;
   if(force || Date.now() > session.exp){
@@ -1156,12 +1171,12 @@ async function accessToken(force){
 }
 async function rest(method, query, body, retried){
   const t = await accessToken(false);
-  const r = await fetch(`${SB}/rest/v1/ultradien_docs${query}`, { method,
-    headers:{ apikey:KEY, Authorization:`Bearer ${t}`, "Content-Type":"application/json", Prefer:"resolution=merge-duplicates,return=minimal" },
+  const r = await fetch(`${SB}/rest/v1/ultradien_docs${query}`, { method, keepalive: document.hidden && !!body && JSON.stringify(body).length < 60000,
+    headers:{ apikey:KEY, Authorization:`Bearer ${t}`, "Content-Type":"application/json", Prefer:"resolution=merge-duplicates,return=representation" },
     body: body ? JSON.stringify(body) : undefined });
   if(r.status === 401 && !retried){ await accessToken(true); return rest(method, query, body, true); }
   if(!r.ok){ const e = new Error(`HTTP ${r.status}`); e.status = r.status; throw e; }
-  return method === "GET" ? r.json() : null;
+  return r.json().catch(() => []);
 }
 
 /* Fusion : listes par identifiant (la modification la plus récente gagne), blocs réunis sans doublon */
@@ -1189,31 +1204,44 @@ function mergeRemoteLog(k, r){
 
 async function syncNow(){
   clearTimeout(syncTimer);
-  if(!CONFIGURED || !session || syncing) { setStatus(); return; }
+  if(!CONFIGURED || !session) { setStatus(); return; }
+  if(syncing){ again = true; return; }
   if(!navigator.onLine){ setStatus(); return; }
   syncing = true; setStatus();
   try{
-    const before = canon({ s:stateBody(), l:LOGS });
-    const rows = await rest("GET", "?select=id,body");
-    const remote = {}; for(const row of rows) remote[row.id] = row.body;
-    if(remote.state) mergeRemoteState(remote.state);
-    for(const k of Object.keys(remote)) if(/^log-\d{4}-\d{2}$/.test(k)) mergeRemoteLog(k, remote[k]);
-    purgeDeleted();
-    saveLocal();
-    const out = [], now = new Date().toISOString(), st = stateBody();
-    if(canon(remote.state) !== canon(st)) out.push({ id:"state", body:st, updated_at:now });
-    for(const k of Object.keys(LOGS)) if(canon(remote[k]) !== canon(LOGS[k])) out.push({ id:k, body:LOGS[k], updated_at:now });
-    if(out.length) await rest("POST", "?on_conflict=user_id,id", out);
-    dirty.clear(); saveDirty();
+    const docs = () => ({ state:stateBody(), ...LOGS });
+    const before = {}; for(const [k,v] of Object.entries(docs())) before[k] = canon(v);
+    // 1. petite requête : quels documents ont changé ailleurs ?
+    const heads = await rest("GET", "?select=id,updated_at");
+    if(!Object.keys(known).length){ const there = new Set(heads.map(h => h.id)); Object.keys(before).forEach(k => { if(!there.has(k)) dirty.add(k); }); }   // premier passage sur cet appareil
+    const changed = heads.filter(h => known[h.id] !== h.updated_at).map(h => h.id);
+    const remote = {};
+    if(changed.length){
+      const rows = await rest("GET", `?select=id,body,updated_at&id=in.(${changed.map(id => `"${id}"`).join(",")})`);
+      for(const row of rows){ remote[row.id] = row.body; known[row.id] = row.updated_at; }
+      if(remote.state) mergeRemoteState(remote.state);
+      for(const k of Object.keys(remote)) if(/^log-\d{4}-\d{2}$/.test(k)) mergeRemoteLog(k, remote[k]);
+      purgeDeleted();
+      saveLocal();
+    }
+    // 2. envoi : ce qui a été modifié ici, ou ce que la fusion a fait évoluer
+    const now = new Date().toISOString(), cur = docs(), out = [];
+    for(const [k,v] of Object.entries(cur)){
+      const c = canon(v);
+      const needs = dirty.has(k) || (k in remote ? canon(remote[k]) !== c : c !== before[k]);
+      if(needs) out.push({ id:k, body:v, updated_at:now });
+    }
+    if(out.length){ const back = await rest("POST", "?on_conflict=user_id,id&select=id,updated_at", out); for(const h of back || []) known[h.id] = h.updated_at; }
+    saveKnown(); dirty.clear(); saveDirty();
     lastSync = Date.now(); store(LKEY, String(lastSync)); syncErr = "";
-    if(canon({ s:stateBody(), l:LOGS }) !== before){
+    if(changed.length && Object.keys(cur).some(k => canon(cur[k]) !== before[k])){
       if(!ui.editing && !(document.activeElement && document.activeElement.closest("#add-form,#newproj-form,#sync-form"))) render();
       else { renderPillow(); renderControls(); }
     }
   }catch(e){
     if(!syncErr) syncErr = e.status === 404 ? "Table introuvable : vérifie l'étape SQL du guide." : "Synchro impossible pour l'instant, nouvel essai bientôt.";
-    if(session) scheduleSync(60000);
-  }finally{ syncing = false; setStatus(); renderSync(); }
+    if(session && dirty.size) scheduleSync(3*60000);
+  }finally{ syncing = false; setStatus(); renderSync(); if(again){ again = false; if(dirty.size) scheduleSync(2000); } }
 }
 
 /* Statut et panneau de synchronisation */
@@ -1225,6 +1253,7 @@ setStatus = function(){
   else if(syncing) t = "Synchronisation…";
   else if(!navigator.onLine) t = dirty.size ? "Hors ligne, synchro en attente" : "Hors ligne";
   else if(syncErr){ t = "Synchro en échec"; c = "pin"; }
+  else if(dirty.size) t = "Modifications à envoyer (dans 30 s)";
   else if(lastSync){ t = `Synchronisé à ${hhmm(lastSync)}`; c = "rest"; }
   else t = "Synchro en attente";
   el.innerHTML = `<i class="pinhead" style="--c:var(--${c})"></i><span>${t}</span>`;
@@ -1256,10 +1285,15 @@ function renderSync(){
 }
 const _renderHist = renderHist;
 renderHist = function(){ _renderHist(); renderSync(); };
-window.addEventListener("online", () => { setStatus(); syncNow(); });
+const stale = () => Date.now() - lastSync > STALE;
+window.addEventListener("online", () => { setStatus(); if(session && (dirty.size || stale())) syncNow(); });
 window.addEventListener("offline", setStatus);
-document.addEventListener("visibilitychange", () => { if(!document.hidden && session) scheduleSync(300); });
-setInterval(() => { if(session && !document.hidden) syncNow(); }, 60000);
+document.addEventListener("visibilitychange", () => {
+  if(!session) return;
+  if(document.hidden){ if(dirty.size) syncNow(); }          // on quitte l'appli : on envoie ce qui attend
+  else if(stale()) scheduleSync(300);                         // retour après une absence : on récupère
+});
+window.addEventListener("pagehide", () => { if(session && dirty.size) syncNow(); });
 if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(() => {});
 setStatus(); renderSync(); if(session) syncNow();
 
