@@ -4,7 +4,7 @@
    - à l'installation, les fichiers sont relus sur le serveur (cache: "reload"), jamais depuis le cache du navigateur ;
    - l'audio NSDR (5 Mo) vit dans son propre cache, gardé d'une version à l'autre.
    Changer VERSION à chaque mise à jour des fichiers. */
-const VERSION = "ultradien-v15", MEDIA = "ultradien-media";
+const VERSION = "ultradien-v17", MEDIA = "ultradien-media";
 const FRESH = ["./", "./index.html", "./config.js", "./manifest.webmanifest"];
 const STATIC = ["./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable.png", "./icons/icon.svg", "./icons/apple-touch-icon.png"];
 const AUDIO = "./audio/nsdr.mp3";

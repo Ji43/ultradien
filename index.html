@@ -59,7 +59,7 @@ h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0}
 .d{display:inline-block;width:.56em;text-align:center}
 .wrap{max-width:1180px;margin:0 auto}
 .sr{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
-@media (hover:none),(pointer:coarse){.kbd{display:none}}
+@media (hover:none),(pointer:coarse){.kbd,.kbd-only{display:none}}
 
 /* Barre haute : onglets « Padded » du kit (gris #696969, actif = encre + filet bas 3 px) */
 .bar{display:flex;align-items:center;gap:14px 22px;flex-wrap:wrap;padding-block:16px 0;border-bottom:2px solid var(--ink)}
@@ -190,6 +190,8 @@ body.is-running .panel:focus-within,body.is-running .settings:focus-within{opaci
 /* Bilan de bloc */
 .review{display:flex;flex-direction:column;align-items:stretch;gap:16px;width:100%}
 .review .controls{justify-content:flex-start}
+.review .hint{text-align:left}
+.review-notes .link-btn{display:inline;min-height:0;padding:0}
 .review .link-btn{align-self:flex-start}
 .review-q{font-family:var(--f-display);font-size:24px;line-height:30px}
 .rating{display:flex;flex-wrap:wrap;gap:10px}
@@ -347,6 +349,57 @@ tr.sub td:first-child{padding-left:52px}
 .file-btn:focus-within{outline:2px solid var(--ink);outline-offset:3px}
 .err{color:var(--danger)}
 
+/* Mode zen : seul le minuteur reste (et la note rapide) */
+.dial{position:relative;align-self:center;display:flex;justify-content:center}
+.zen-btn{position:absolute;top:0;right:-6px;display:inline-flex;align-items:center;gap:6px;border:2px solid var(--ink);border-radius:32px;background:var(--ground);color:var(--ink);font-size:16px;line-height:22px;padding:4px 12px 5px 9px;min-height:var(--hit);cursor:pointer;transition:transform .12s,box-shadow .12s}
+.zen-btn svg{width:18px;height:18px}
+.zen-btn[aria-pressed="true"]{background:var(--ink);color:var(--ground)}
+@media (hover:hover){.zen-btn:hover{box-shadow:var(--sh-hard);transform:translateY(-1px)}}
+body.zen .bar,body.zen .picker,body.zen #controls,body.zen #rest-note,body.zen #nsdr-box,body.zen #settings,body.zen .panel,body.zen #view-hist,body.zen #view-notes{display:none!important}
+body.zen #view-focus{display:block!important}
+body.zen{padding-bottom:0}
+body.zen .main{grid-template-columns:minmax(0,1fr);min-height:100vh;min-height:100dvh;align-content:center;padding-block:64px 24px}
+body.zen .stage{max-width:620px;width:100%;margin-inline:auto;padding:0;gap:28px}
+body.zen .pillow{width:min(560px,92vw,calc(100vh - 250px));width:min(560px,92vw,calc(100dvh - 250px));min-width:240px}
+body.zen .zen-btn{position:fixed;top:max(16px,env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));z-index:5}
+body.zen .qnote{max-width:520px;width:100%;align-self:center}
+
+@media (prefers-reduced-motion:no-preference){body.zen .stage{animation:zen-in .35s cubic-bezier(.16,1,.3,1)}}
+@keyframes zen-in{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}
+
+/* Note rapide pendant un bloc */
+.qnote{display:flex;flex-direction:column;gap:6px}
+.qnote-row{display:flex;gap:10px}
+.qnote-row .input{flex:1;min-width:0}
+.qnote .input{border-style:dashed;border-color:var(--rule)}
+.qnote .input:focus{border:2px solid var(--ink)}
+#view-focus .qnote{max-width:460px;width:100%;align-self:center}
+.qnote-meta.flash{color:var(--ink)}
+.qnote-meta{margin:0;transition:color .4s;font-size:16px;line-height:22px;color:var(--ink-2);min-height:22px}
+.qnote-meta button{all:unset;cursor:pointer;color:var(--ink);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px}
+.qnote-meta button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* Onglet Notes : même grammaire que le journal (rangées séparées par un filet) */
+.tab .count{display:inline-block;min-width:22px;margin-left:6px;padding:0 6px;border-radius:32px;background:var(--ink);color:var(--ground);font-size:14px;line-height:20px;text-align:center}
+.notes-view{padding-top:calc(var(--gap) + 12px);max-width:820px}
+.notes-intro{text-align:left;margin:0 0 16px;max-width:62ch}
+.notes-add{margin-bottom:16px}
+.nfilters{justify-content:flex-start;margin-bottom:16px}
+.nrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 14px;align-items:start;border-bottom:1px solid var(--gray-2);padding:14px 4px 14px 0}
+.nrow p{margin:0;font-size:18px;line-height:24px;overflow-wrap:anywhere;white-space:pre-wrap}
+.nrow.done p{color:var(--ink-2);text-decoration:line-through;text-decoration-thickness:1.5px}
+.nrow .jmeta{margin-top:4px}
+.nact{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+/* Checkbox du kit : 20 px, trait 2 px, rayon 4 ; cochée = encre */
+.check{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:calc((var(--hit) - 20px)/2) 0;border:2px solid var(--ink);border-radius:4px;background:var(--ground);cursor:pointer;display:grid;place-content:center;flex:none}
+.check::before{content:"";width:10px;height:6px;border-left:2px solid var(--ground);border-bottom:2px solid var(--ground);transform:rotate(-45deg) translate(1px,-1px);opacity:0}
+.check{position:relative}
+.check::after{content:"";position:absolute;inset:calc((20px - var(--hit))/2)}
+.check:checked{background:var(--ink)}
+.check:checked::before{opacity:1}
+.nempty{border:2px dashed var(--rule);border-radius:var(--r);padding:22px;text-align:center;color:var(--ink-2);list-style:none;margin-top:4px}
+@media (max-width:560px){.nrow{grid-template-columns:auto minmax(0,1fr)}.nact{grid-column:2;justify-content:flex-start}}
+
 /* Toast du kit, style Dark : encre, rayon 8, 10/16, ombre small */
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--ground);border:2px solid var(--ink);padding:10px 16px;border-radius:var(--r);box-shadow:var(--sh-s);font-size:16px;line-height:22px;opacity:0;transition:opacity .25s,transform .35s cubic-bezier(.16,1,.3,1);pointer-events:none;max-width:min(420px,calc(100vw - 32px));z-index:10}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -360,6 +413,7 @@ tr.sub td:first-child{padding-left:52px}
     <h1 class="brand"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="var(--ground-2)" stroke-width="7"/><path d="M20 6a14 14 0 0 1 8.2 2.7" fill="none" stroke="var(--warm)" stroke-width="5.5" stroke-linecap="round"/><path d="M28.2 8.7A14 14 0 1 1 6.8 24.8" fill="none" stroke="var(--focus)" stroke-width="5.5" stroke-linecap="round"/><circle cx="20" cy="20" r="17.5" fill="none" stroke="var(--ink)" stroke-width="2"/><circle cx="20" cy="20" r="10.5" fill="var(--ground)" stroke="var(--ink)" stroke-width="2"/><path d="M20 20v-5.5M20 20l3.6 2" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/></svg><span>Ultradien</span></h1>
     <nav class="tabs" role="tablist" aria-label="Vues">
       <button class="tab" role="tab" id="tab-focus" aria-selected="true" aria-controls="view-focus" tabindex="0">Concentration</button>
+      <button class="tab" role="tab" id="tab-notes" aria-selected="false" aria-controls="view-notes" tabindex="-1">Notes<span class="count num" id="notes-count" hidden></span></button>
       <button class="tab" role="tab" id="tab-hist" aria-selected="false" aria-controls="view-hist" tabindex="-1">Historique</button>
     </nav>
     <button class="status" id="status" type="button" title="Sauvegarde et synchronisation"><i class="pinhead"></i><span>Chargement…</span></button>
@@ -374,9 +428,17 @@ tr.sub td:first-child{padding-left:52px}
           <label for="task-pick">Tâche en cours</label>
           <div class="picker-row"><select class="select" id="task-pick"></select><span class="seg mode-seg" id="mode-switch" role="group" aria-label="Mode de travail"></span></div>
         </div>
-        <div class="pillow" id="pillow"></div>
+        <div class="dial">
+          <div class="pillow" id="pillow"></div>
+          <button class="zen-btn" id="zen-btn" type="button" aria-pressed="false" title="Mode zen : ne garder que le minuteur (Z)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Zen</span></button>
+        </div>
         <p class="sr" id="live" role="status" aria-live="polite"></p>
         <div class="controls" id="controls"></div>
+        <form class="qnote" id="qnote" autocomplete="off" hidden>
+          <label class="sr" for="qnote-in">Note rapide</label>
+          <div class="qnote-row"><input class="input" id="qnote-in" maxlength="300" placeholder="Noter sans décrocher : une tâche, une info…" enterkeyhint="done"><button class="btn quiet md" type="submit">Noter</button></div>
+          <p class="qnote-meta" id="qnote-meta"></p>
+        </form>
         <div class="rest-note" id="rest-note" hidden>
           <h3>Défocalisation délibérée</h3>
           <ul>
@@ -407,6 +469,20 @@ tr.sub td:first-child{padding-left:52px}
         <div id="groups"></div>
         <button class="ghost archived-toggle" id="archived-toggle" type="button" hidden></button>
       </div>
+    </div>
+  </section>
+
+  <section id="view-notes" role="tabpanel" aria-labelledby="tab-notes" hidden>
+    <div class="notes-view">
+      <div class="sec-head"><h2 id="h-notes">Notes rapides</h2><span class="meta" id="notes-meta"></span></div>
+      <p class="hint notes-intro">Ce que tu as noté pendant tes blocs, sans décrocher : une tâche qu'on t'a confiée, une info, une idée. Coche ce qui est traité, ou fais-en une tâche.</p>
+      <form class="qnote-row notes-add" id="notes-add" autocomplete="off">
+        <label class="sr" for="notes-add-in">Nouvelle note</label>
+        <input class="input" id="notes-add-in" maxlength="300" placeholder="Ajouter une note">
+        <button class="btn md" type="submit">Noter</button>
+      </form>
+      <div class="chips nfilters" id="notes-filter" role="group" aria-label="Filtrer les notes"></div>
+      <ul class="journal notes-list" id="notes-list"></ul>
     </div>
   </section>
 
@@ -509,12 +585,12 @@ function arm(btn, label, fn, aria){
   setTimeout(() => { if(btn.isConnected && btn.dataset.arm){ delete btn.dataset.arm; btn.innerHTML = old; btn.classList.remove("armed"); if(oldAria) btn.setAttribute("aria-label", oldAria); else btn.removeAttribute("aria-label"); } }, 5000);
 }
 
-let S = blank(), LOGS = {};
+let S = blank(), LOGS = {}, NOTES = { items:[] };
 let db = null, userId = null, mode = "local";
 const ui = { tab:"focus", weekOffset:0, filter:"all", showArchived:false, editing:null, menu:null, sort:"total" };
 
-function loadLocal(){ try{ const raw = localStorage.getItem(LS_KEY); if(raw){ const o = JSON.parse(raw); if(o.S){ S = Object.assign(blank(), o.S); normalize(); } if(o.LOGS) LOGS = o.LOGS; } }catch(e){} }
-function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({S, LOGS})); ui.full = false; }
+function loadLocal(){ try{ const raw = localStorage.getItem(LS_KEY); if(raw){ const o = JSON.parse(raw); if(o.S){ S = Object.assign(blank(), o.S); normalize(); } if(o.LOGS) LOGS = o.LOGS; if(o.NOTES && Array.isArray(o.NOTES.items)) NOTES = o.NOTES; } }catch(e){} }
+function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({S, LOGS, NOTES})); ui.full = false; }
   catch(e){ if(!ui.full){ ui.full = true; setTimeout(() => toast("Espace du navigateur plein : exporte une sauvegarde depuis l'Historique."), 0); } } }
 
 /* Écritures : une à la fois par document, la plus récente gagne */
@@ -553,6 +629,32 @@ function mergeSessions(mine, theirs){
 }
 function addSession(sess){ const k = monthKey(sess.start); LOGS[k] = { sessions:[...((LOGS[k]||{}).sessions||[]), sess] }; persist(k, LOGS[k]); }
 const allSessions = () => Object.values(LOGS).flatMap(l => l.sessions||[]).sort((a,b)=>a.start-b.start);
+
+/* Notes rapides : prises pendant un bloc (ou depuis l'onglet Notes), gardées dans leur propre document « notes ».
+   Une note supprimée devient une marque { id, del } pour que la synchro et l'import ne la fassent pas revenir. */
+const liveNotes = () => NOTES.items.filter(n => !n.del).sort((a,b) => b.at - a.at);
+const saveNotes = () => persist("notes", NOTES);
+function mergeNotes(theirs){
+  const map = new Map(NOTES.items.map(n => [n.id, n])); let changed = false;
+  for(const t of (theirs && theirs.items) || []){ if(!t || !t.id) continue; const m = map.get(t.id); if(!m || (t.upd || 0) > (m.upd || 0)){ map.set(t.id, t); changed = true; } }
+  if(changed) NOTES = { items:[...map.values()] };
+  return changed;
+}
+function addNote(text){
+  text = String(text || "").trim().slice(0, 300); if(!text) return null;
+  const a = S.active, n = touch({ id:uid(), text, at:Date.now(), taskId:a ? a.taskId : (S.rite || S.review ? S.currentTaskId : null), sid:a ? a.id : null, done:false });
+  NOTES.items.push(n); saveNotes(); return n;
+}
+const noteById = id => NOTES.items.find(n => n.id === id && !n.del);
+function setNoteDone(id, done){ const n = noteById(id); if(!n) return; n.done = done; touch(n); saveNotes(); }
+function deleteNote(id){ const i = NOTES.items.findIndex(n => n.id === id); if(i < 0) return; NOTES.items[i] = touch({ id, del:true }); saveNotes(); }
+function noteToTask(id){
+  const n = noteById(id); if(!n) return;
+  const from = taskById(n.taskId), pid = from && projById(from.projectId) ? from.projectId : null;
+  const t = touch({ id:uid(), name:n.text.split("\n")[0].slice(0, 80), projectId:pid, created:Date.now(), archived:false });
+  S.tasks.push(t); n.done = true; n.taskMade = t.id; touch(n); saveState(); saveNotes();
+  return { t, p:projById(pid) };
+}
 
 /* Dérivés */
 const projById = id => S.projects.find(p=>p.id===id);
@@ -611,6 +713,7 @@ function lightPause(){
   addSession({ id:a.id, taskId:a.taskId, start:a.start, end, ms, recenters:a.recenters.length, mode:"light" });
   const mins = flowBreak(ms);
   S.pause = { start:end, minutes:mins, chimed:false, nsdr:false, nsdrHidden:false, light:true, rev:{ sid:a.id, month:monthKey(a.start), rating:null } };
+  setZen(false, true);
   saveState(); render(); toast(`${fmt(ms)} de travail léger : pause de ${mins} min, calculée sur ton temps.`);
 }
 function endDay(){
@@ -618,7 +721,7 @@ function endDay(){
   if(a && a.light){ const end = Date.now(), ms = end - a.start; if(ms >= MIN) addSession({ id:a.id, taskId:a.taskId, start:a.start, end, ms, recenters:a.recenters.length, mode:"light" }); }
   else if(a){ const end = Math.min(Date.now(), a.start + a.cap*MIN), ms = end - a.start; if(ms >= MIN) addSession({ id:a.id, taskId:a.taskId, start:a.start, end, ms, recenters:a.recenters.length, cap:a.cap, mode:"deep", chained:(a.base||0) > 0 }); }
   S.active = null; S.rite = null; S.review = null; S.pause = null; S.chain = null; ambient.stop(); nsdrAudio.stop();
-  S.dayEnd = { at:Date.now(), closed:false }; saveState(); render();
+  S.dayEnd = { at:Date.now(), closed:false }; setZen(false, true); saveState(); render();
 }
 function closeDay(){
   const t = taskById(S.currentTaskId), v = ($("#next-step") || {}).value;
@@ -660,6 +763,7 @@ function endBlock(auto=false){
   const total = (a.base || 0) + ms;
   S.chain = { ms:total };
   S.review = { sid:a.id, month:monthKey(a.start), ms, total, end, auto, rating:null };
+  setZen(false, true);
   if(auto) chime("end");
   saveState(); render();
 }
@@ -943,7 +1047,7 @@ function rateUI(r, q){
           : `<button type="button" class="chip tag" id="cause-add">${ICON.plus}Autre</button>`}</div></div>
       <div class="note-row"><label class="field-label" for="b-note">Note perso <span class="muted">(facultatif)</span></label>
         <input class="input" id="b-note" maxlength="200" autocomplete="off" placeholder="Ce qui a aidé ou gêné ta concentration" value="${esc(s.note || "")}"></div></div>`
-      : `<button type="button" class="link-btn" id="b-more">${ICON.plus}Noter une cause de décrochage ou une note</button>`}`;
+      : `<button type="button" class="link-btn" id="b-more">${ICON.plus}Noter une cause de décrochage ou un commentaire</button>`}`;
 }
 function wireRate(c){
   c.querySelectorAll("[data-rate]").forEach(b => b.onclick = () => rateBlock(+b.dataset.rate));
@@ -956,6 +1060,14 @@ function wireRate(c){
       if(e.key === "Escape"){ ui.addCause = null; renderControls(); } }; }
   const n = c.querySelector("#b-note");
   if(n){ n.onchange = () => noteBlock(n.value); n.onkeydown = e => { if(e.key === "Enter"){ e.preventDefault(); n.blur(); } }; }
+}
+function renderQnote(){
+  { const i = $("#qnote-in"), ph = innerWidth < 480 ? "Une tâche, une info…" : "Noter sans décrocher : une tâche, une info…"; if(i.placeholder !== ph) i.placeholder = ph; }
+  const f = $("#qnote"), running = !!(S.active || S.rite), show = ui.zen || (running && ui.tab === "focus");
+  if(f.hidden === show) f.hidden = !show;
+  const sid = S.active ? S.active.id : null, n = sid ? liveNotes().filter(x => x.sid === sid).length : 0, meta = $("#qnote-meta");
+  const html = n ? `${n} note${n > 1 ? "s" : ""} pendant ce bloc · <button type="button" id="qnote-see">les voir</button>` : running ? "Entrée pour enregistrer : la note t'attendra dans l'onglet Notes." : "";
+  if(meta.dataset.h !== html){ if(meta.dataset.h && n){ meta.classList.add("flash"); setTimeout(() => meta.classList.remove("flash"), 900); } meta.dataset.h = html; meta.innerHTML = html; const b = $("#qnote-see"); if(b) b.onclick = () => { setZen(false); showTab("notes", true); }; }
 }
 function renderControls(){
   { const n = document.activeElement && document.activeElement.id === "b-note" ? document.activeElement : null; if(n) noteBlock(n.value); }
@@ -979,6 +1091,7 @@ function renderControls(){
   } else if(r){
     const chain = canChain(r), next = Math.max(1, Math.min(S.settings.cap, Math.floor(SERIES_MAX - r.total/MIN)));
     html = `<div class="review">${rateUI(r, "Comment était ta concentration ?")}
+      ${(() => { const k = liveNotes().filter(x => x.sid === r.sid).length; return k ? `<p class="hint review-notes">${k} note${k > 1 ? "s" : ""} rapide${k > 1 ? "s" : ""} prise${k > 1 ? "s" : ""} pendant ce bloc. <button type="button" class="link-btn" id="b-notes">Les voir dans Notes</button></p>` : ""; })()}
       ${chain && r.rating === 4 ? `<p class="hint">Tu es en flow : enchaîne tant que ça coule.</p>` : chain ? `<p class="hint">Bloc court : tu peux enchaîner sans pause.</p>` : ""}
       ${row(`${chain ? `<button class="btn fill blue" id="b-chain" type="button">${ICON.play}Enchaîner ${next} min</button>` : ""}<button class="btn fill sage" id="b-pause" type="button">${ICON.pauseI}Prendre la pause · ${pauseMinutes(r.total)} min</button>`, stopBtn)}
       <button type="button" class="link-btn" id="b-discard">Bloc lancé par erreur ? Le supprimer</button></div>`;
@@ -996,6 +1109,7 @@ function renderControls(){
   on("b-rec", recenter); on("b-lp", lightPause); on("b-stop", endDay); on("b-close", closeDay);
   on("b-resume", () => { S.dayEnd = null; saveState(); render(); });
   on("b-go", startBlock); on("b-x", cancelRite); on("b-end", () => endBlock(false));
+  on("b-notes", () => showTab("notes", true));
   on("b-chain", chainNext); on("b-pause", takePause); on("b-start", beginBlock); on("b-ext", extendPause);
   const bc = c.querySelector("#b-cancel"); if(bc) bc.onclick = () => arm(bc, "Confirmer l'annulation", cancelBlock);
   const bd = c.querySelector("#b-discard"); if(bd) bd.onclick = () => arm(bd, "Confirmer la suppression de ce bloc", discardReview);
@@ -1003,6 +1117,7 @@ function renderControls(){
   $("#rest-note").hidden = !S.pause;
   renderNsdr();
   renderSettings();
+  renderQnote();
 }
 
 /* Réglages du bloc : repliés, une rangée par réglage (libellé au-dessus, commande dessous) */
@@ -1205,7 +1320,7 @@ function renderHist(){
   $("#jfilters").querySelectorAll("[data-jc]").forEach(b => b.onclick = () => { ui.jc = ui.jc === b.dataset.jc ? "" : b.dataset.jc; ui.jn = 0; renderHist(); });
   const shown = ss.filter(s => (!jl || s.focus === jl) && (!jc || (s.causes || []).includes(jc))).reverse(), jn = ui.jn || 15;
   $("#journal").innerHTML = shown.length ? shown.slice(0, jn).map(s => { const tk = taskById(s.taskId), noted = s.note || (s.causes && s.causes.length);
-      return `<li class="jrow ${noted ? "noted" : ""}"><div class="jmeta"><span class="task-n">${esc(tk ? tk.name : "Tâche supprimée")}</span><span class="num">${dateLabel(s.start)}</span><span>${modeOf(s)==="light" ? "léger" : "profond"} · ${fmt(s.ms)}${s.recenters ? ` · ${s.recenters} recentrage${s.recenters > 1 ? "s" : ""}` : ""}</span></div>
+      return `<li class="jrow ${noted ? "noted" : ""}"><div class="jmeta"><span class="task-n">${esc(tk ? tk.name : "Tâche supprimée")}</span><span class="num">${dateLabel(s.start)}</span><span>${modeOf(s)==="light" ? "léger" : "profond"} · ${fmt(s.ms)}${s.recenters ? ` · ${s.recenters} recentrage${s.recenters > 1 ? "s" : ""}` : ""}${(() => { const k = liveNotes().filter(x => x.sid === s.id).length; return k ? ` · ${k} note${k > 1 ? "s" : ""} rapide${k > 1 ? "s" : ""}` : ""; })()}</span></div>
         <div class="jbody">${lvlBadge(s.focus)}${(s.causes || []).map(c => `<span class="ctag">${esc(c)}</span>`).join("")}${s.note ? `<p>${esc(s.note)}</p>` : ""}</div>
         <div class="jact"><button type="button" class="del-s" data-del-s="${s.id}" aria-label="Supprimer le bloc du ${dateLabel(s.start)}">${ICON.trash}</button></div></li>`; }).join("")
     : `<li class="empty">${ss.length ? "Aucun bloc pour ce filtre." : "Aucun bloc pour l'instant."}</li>`;
@@ -1214,8 +1329,57 @@ function renderHist(){
   $("#last-export").textContent = S.lastExport ? `Dernier export : ${new Date(S.lastExport).toLocaleDateString("fr-FR",{day:"numeric",month:"long"})}` : "Aucun export pour l'instant";
 }
 
+/* Annonce pour les lecteurs d'écran (région polie partagée avec les changements de phase) */
+function announce(msg){ const l = $("#live"); if(!l) return; l.textContent = ""; requestAnimationFrame(() => { l.textContent = msg; }); }
+
+/* Onglet Notes */
+function renderNotes(){
+  const all = liveNotes(), open = all.filter(n => !n.done), nf = ui.nf || "open";
+  const c = $("#notes-count"); c.hidden = !open.length; c.textContent = open.length;
+  $("#tab-notes").setAttribute("aria-label", open.length ? `Notes, ${open.length} à traiter` : "Notes");
+  if(ui.tab !== "notes") return;
+  $("#notes-meta").textContent = all.length ? `${open.length} à traiter sur ${all.length}` : "";
+  $("#notes-filter").innerHTML = [["open","À traiter", open.length], ["done","Traitées", all.length - open.length], ["all","Toutes", all.length]]
+    .map(([v,l,n]) => `<button type="button" class="chip" data-nf="${v}" aria-pressed="${nf===v}">${l} <span class="n num">${n}</span></button>`).join("");
+  $("#notes-filter").querySelectorAll("[data-nf]").forEach(b => b.onclick = () => { ui.nf = b.dataset.nf; renderNotes(); });
+  const shown = nf === "all" ? all : nf === "done" ? all.filter(n => n.done) : open;
+  $("#notes-list").innerHTML = shown.length ? shown.map(n => { const tk = taskById(n.taskId), made = n.taskMade && taskById(n.taskMade);
+      return `<li class="nrow ${n.done ? "done" : ""}"><input type="checkbox" class="check" data-done="${n.id}" ${n.done ? "checked" : ""} aria-label="Traitée : ${esc(n.text.slice(0, 60))}">
+        <div><p>${esc(n.text)}</p><div class="jmeta"><span class="num">${dateLabel(n.at)}</span>${tk ? `<span>pendant « ${esc(tk.name)} »</span>` : n.taskId ? `<span>pendant une tâche supprimée</span>` : ""}${made ? `<span>devenue la tâche « ${esc(made.name)} »</span>` : ""}</div></div>
+        <div class="nact">${made || n.done ? "" : `<button type="button" class="ghost" data-totask="${n.id}">En faire une tâche</button>`}<button type="button" class="del-s" data-del-n="${n.id}" aria-label="Supprimer cette note" title="Supprimer cette note">${ICON.trash}</button></div></li>`; }).join("")
+    : `<li class="nempty">${!all.length ? "Aucune note pour l'instant. Pendant un bloc, écris sous le minuteur<span class='kbd-only'> (ou touche N)</span> : la note arrive ici, sans quitter ta concentration." : nf === "open" ? "Tout est traité." : "Rien ici."}</li>`;
+  const L = $("#notes-list");
+  L.querySelectorAll("[data-done]").forEach(b => b.onchange = () => { setNoteDone(b.dataset.done, b.checked); renderNotes(); announce(b.checked ? "Note traitée." : "Note à traiter."); });
+  L.querySelectorAll("[data-totask]").forEach(b => b.onclick = () => { const r = noteToTask(b.dataset.totask); if(!r) return; render(); renderNotes(); toast(`Tâche « ${r.t.name} » créée${r.p ? ` dans ${r.p.name}` : ""}.`); });
+  L.querySelectorAll("[data-del-n]").forEach(b => b.onclick = () => arm(b, `${ICON.trash}Confirmer`, () => { deleteNote(b.dataset.delN); renderNotes(); toast("Note supprimée."); }));
+}
+
+/* Mode zen : on ne garde que le minuteur et la note rapide. Échap ou le bouton pour sortir. */
+function setZen(on, quiet){
+  on = !!on; if(on && !S.active) return; if(on === !!ui.zen) return;
+  const hadFocus = document.activeElement && document.activeElement.closest("#qnote");
+  ui.zen = on; try{ localStorage.setItem("ultradien.zen", on ? "1" : ""); }catch(e){}
+  if(on && ui.tab !== "focus") showTab("focus");
+  document.body.classList.toggle("zen", on);
+  const b = $("#zen-btn"); b.setAttribute("aria-pressed", String(on)); b.querySelector("span").textContent = on ? "Quitter le zen" : "Zen";
+  b.title = on ? "Revenir à l'interface complète (Échap)" : "Mode zen : ne garder que le minuteur (Z)";
+  try{
+    if(on && document.fullscreenEnabled && !document.fullscreenElement && matchMedia("(pointer:coarse)").matches) document.documentElement.requestFullscreen().catch(() => {});
+    if(!on && document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  }catch(e){}
+  renderQnote();
+  if(!quiet) announce(on ? "Mode zen : seul le minuteur reste affiché. Échap pour sortir." : "Interface complète.");
+  else if(hadFocus) requestAnimationFrame(() => { const f = $(".rating .chip") || $("#controls button"); if(f) f.focus(); });
+}
+$("#zen-btn").onclick = () => setZen(!ui.zen);
+$("#qnote").onsubmit = e => { e.preventDefault(); const i = $("#qnote-in"), n = addNote(i.value); if(!n){ i.focus(); return; }
+  i.value = ""; renderQnote(); renderNotes(); announce("Note enregistrée."); i.focus(); };
+$("#qnote-in").onkeydown = e => { if(e.key === "Escape"){ e.preventDefault(); e.stopPropagation(); e.target.blur(); } };
+$("#notes-add").onsubmit = e => { e.preventDefault(); const i = $("#notes-add-in"), n = addNote(i.value); if(!n){ i.focus(); return; }
+  i.value = ""; ui.nf = ui.nf === "done" ? "open" : ui.nf; renderNotes(); i.focus(); };
+
 /* Sauvegarde : export et import avec fusion */
-function backupJSON(){ return JSON.stringify({ app:"ultradien", v:1, exported:new Date().toISOString(), state:stateBody(), logs:LOGS }, null, 1); }
+function backupJSON(){ return JSON.stringify({ app:"ultradien", v:1, exported:new Date().toISOString(), state:stateBody(), logs:LOGS, notes:NOTES }, null, 1); }
 let downloads = null;
 async function exportBackup(){
   const name = `ultradien-sauvegarde-${new Date().toISOString().slice(0,10)}.json`, data = backupJSON();
@@ -1244,6 +1408,7 @@ function mergeBackup(o){
     if(m.changed){ LOGS[k] = { sessions:m.list }; changed.add(k); }
   }
   for(const k of purgeDeleted()) changed.add(k);
+  if(o.notes && mergeNotes(o.notes)) saveNotes();
   saveState(); for(const k of changed) persist(k, LOGS[k]);
   return Math.max(0, allSessions().length - before);
 }
@@ -1256,7 +1421,7 @@ $("#export").onclick = exportBackup;
 
 /* Divers */
 let toastT;
-function toast(msg){ const t = $("#toast"); t.textContent = ""; t.classList.add("on"); requestAnimationFrame(() => { t.textContent = msg; }); clearTimeout(toastT); toastT = setTimeout(()=>{ t.classList.remove("on"); }, 3500); }
+function toast(msg){ const t = $("#toast"); t.classList.remove("on"); t.textContent = msg; requestAnimationFrame(() => t.classList.add("on")); clearTimeout(toastT); toastT = setTimeout(()=>{ t.classList.remove("on"); }, 3500); }
 function setStatus(err){
   const el = $("#status"), dot = c => `<i class="pinhead" style="--c:var(--${c})"></i>`;
   if(err==="err") el.innerHTML = `${dot("danger")}<span>Synchro en ligne refusée, copie gardée sur cet appareil</span>`;
@@ -1266,7 +1431,7 @@ function setStatus(err){
 }
 /* Les vues sont redessinées en entier : on remet le focus clavier sur l'élément équivalent après chaque rendu */
 function focusKey(){
-  const a = document.activeElement; if(!a || a === document.body || !a.closest("#controls,#settings,#groups,#view-hist,.picker")) return null;
+  const a = document.activeElement; if(!a || a === document.body || !a.closest("#controls,#settings,#groups,#view-hist,#view-notes,.picker")) return null;
   if(a.id) return "#" + CSS.escape(a.id);
   for(const at of a.attributes) if(at.name.startsWith("data-") && at.name !== "data-arm") return `[${at.name}="${CSS.escape(at.value)}"]`;
   return null;
@@ -1276,8 +1441,8 @@ const keepFocus = fn => function(...args){
   if(k && (document.activeElement === document.body || !document.activeElement)){ const el = document.querySelector(k); if(el && !el.disabled) el.focus({ preventScroll:true }); }
   return r;
 };
-function render(){ renderPicker(); renderPillow(); renderControls(); renderGroups(); renderAddProj(); if(ui.tab==="hist") renderHist(); }
-render = keepFocus(render); renderControls = keepFocus(renderControls); renderGroups = keepFocus(renderGroups); renderHist = keepFocus(renderHist);
+function render(){ $("#zen-btn").hidden = !S.active; if(ui.zen && !S.active) setZen(false, true); renderPicker(); renderPillow(); renderControls(); renderGroups(); renderAddProj(); renderNotes(); if(ui.tab==="hist") renderHist(); }
+renderNotes = keepFocus(renderNotes); render = keepFocus(render); renderControls = keepFocus(renderControls); renderGroups = keepFocus(renderGroups); renderHist = keepFocus(renderHist);
 function tick(){
   if(S.rite){ if(Date.now() - S.rite.start >= RITE_MS){ chime("warm"); startBlock(); return; } renderPillow(); return; }
   if(S.review && Date.now() - S.review.end > 5*MIN && !(document.activeElement && document.activeElement.closest("#controls input"))){ takePause(); return; }
@@ -1295,12 +1460,11 @@ function tick(){
   }
 }
 /* Onglets : modèle WAI-ARIA (flèches, Début, Fin) */
-const TABS = ["focus","hist"];
-function showTab(t, focus){ ui.tab = t; const h = t==="hist";
-  for(const k of TABS){ const b = $("#tab-" + k), on = k === t; b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; }
-  $("#view-hist").hidden = !h; $("#view-focus").hidden = h; if(h) renderHist(); if(focus) $("#tab-" + t).focus(); }
-$("#tab-focus").onclick = () => showTab("focus");
-$("#tab-hist").onclick = () => showTab("hist");
+const TABS = ["focus","notes","hist"];
+function showTab(t, focus){ ui.tab = t;
+  for(const k of TABS){ const b = $("#tab-" + k), on = k === t; b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; $("#view-" + k).hidden = !on; }
+  if(t === "hist") renderHist(); if(t === "notes") renderNotes(); renderQnote(); if(focus) $("#tab-" + t).focus(); }
+for(const k of TABS) $("#tab-" + k).onclick = () => showTab(k);
 $(".tabs").onkeydown = e => { const i = TABS.indexOf(ui.tab);
   const j = e.key === "ArrowRight" ? (i+1)%TABS.length : e.key === "ArrowLeft" ? (i+TABS.length-1)%TABS.length : e.key === "Home" ? 0 : e.key === "End" ? TABS.length-1 : -1;
   if(j >= 0){ e.preventDefault(); showTab(TABS[j], true); } };
@@ -1321,7 +1485,11 @@ $("#journal-more").onclick = () => { ui.jn = (ui.jn || 15) + 30; renderHist(); }
 $("#archived-toggle").onclick = () => { ui.showArchived = !ui.showArchived; renderGroups(); };
 /* Raccourcis : Espace lance un bloc, R recentre — seulement quand le focus n'est sur aucune commande */
 document.addEventListener("keydown", e => {
+  if(e.key === "Escape" && ui.zen && !e.target.closest("input,textarea,select")){ e.preventDefault(); setZen(false); $("#zen-btn").focus(); return; }
   if(e.metaKey || e.ctrlKey || e.altKey || ui.tab!=="focus") return;
+  if(e.target !== document.body && e.target.closest("input,select,textarea,[contenteditable]")) return;
+  if((e.key === "z" || e.key === "Z") && !e.repeat && (S.active || ui.zen)){ e.preventDefault(); setZen(!ui.zen); return; }
+  if((e.key === "n" || e.key === "N") && !$("#qnote").hidden){ e.preventDefault(); $("#qnote-in").focus(); return; }
   if(e.target !== document.body && e.target.closest("button,a,summary,input,select,textarea,label,[tabindex],[role=button],[contenteditable]")) return;
   if(e.code==="Space"){ e.preventDefault(); if(!S.active && !S.rite && !S.review && !(S.dayEnd && !S.dayEnd.closed)) beginBlock(); }
   if((e.key==="r"||e.key==="R") && S.active){ e.preventDefault(); recenter(); }
@@ -1330,6 +1498,7 @@ document.addEventListener("pointerdown", unlockAudio, {once:true});
 let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(()=>{ if(ui.tab==="hist") renderHist(); }, 200); });
 
 loadLocal(); setStatus(); render();
+try{ if(localStorage.getItem("ultradien.zen") && S.active) setZen(true, true); }catch(e){}
 nsdrAudio.load().then(() => { renderNsdr(); renderControls(); });
 setInterval(tick, 1000);
 document.addEventListener("visibilitychange", () => { if(!document.hidden) tick(); });
@@ -1418,7 +1587,7 @@ async function syncNow(){
   if(!navigator.onLine){ setStatus(); return; }
   syncing = true; setStatus();
   try{
-    const docs = () => ({ state:stateBody(), ...LOGS });
+    const docs = () => ({ state:stateBody(), notes:NOTES, ...LOGS });
     const before = {}; for(const [k,v] of Object.entries(docs())) before[k] = canon(v);
     // 1. petite requête : quels documents ont changé ailleurs ?
     const heads = await rest("GET", "?select=id,updated_at");
@@ -1430,6 +1599,7 @@ async function syncNow(){
       for(const row of rows){ remote[row.id] = row.body; known[row.id] = row.updated_at; }
       if(remote.state) mergeRemoteState(remote.state);
       for(const k of Object.keys(remote)) if(/^log-\d{4}-\d{2}$/.test(k)) mergeRemoteLog(k, remote[k]);
+      if(remote.notes) mergeNotes(remote.notes);
       purgeDeleted();
       saveLocal();
     }
@@ -1534,12 +1704,13 @@ if(IN_ARTIFACT) (async () => {
     db.collection(`data/users/${userId}`).onSnapshot(snap => {
       if(first){
         first = false; mode = "db"; setStatus();
-        if(snap.empty){ if(S.tasks.length || Object.keys(LOGS).length){ saveState(); for(const k of Object.keys(LOGS)) persist(k, LOGS[k]); } render(); return; }
+        if(snap.empty){ if(S.tasks.length || Object.keys(LOGS).length || NOTES.items.length){ saveState(); for(const k of Object.keys(LOGS)) persist(k, LOGS[k]); if(NOTES.items.length) saveNotes(); } render(); return; }
       }
       for(const doc of snap.docs){
         if(!doc.exists) continue; const body = doc.data();
         if(doc.id==="state"){ if(!inflight.state && !pending.state){ S = Object.assign(blank(), JSON.parse(JSON.stringify(body))); delete S.v; normalize(); } }
         else if(doc.id.startsWith("log-") && !inflight[doc.id] && !pending[doc.id]) LOGS[doc.id] = JSON.parse(JSON.stringify(body));
+        else if(doc.id === "notes" && !inflight.notes && !pending.notes && Array.isArray(body.items)) NOTES = JSON.parse(JSON.stringify(body));
       }
       saveLocal();
       if(!ui.editing && !(document.activeElement && document.activeElement.closest("#add-form,#newproj-form"))) render();
