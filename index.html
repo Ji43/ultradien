@@ -249,6 +249,14 @@ body.zen .dial-sub{display:none}
 .task-sel:focus-visible{outline:none}
 .task:has(.task-sel:focus-visible){outline:2px solid var(--ink);outline-offset:3px}
 .task-name{font-size:18px;overflow-wrap:anywhere}
+.task-next{grid-column:1 / -1;margin:2px 0 0;display:flex;gap:8px;align-items:flex-start;font-size:16px;line-height:22px;color:var(--ink);overflow-wrap:anywhere}
+.task-next svg{width:16px;height:16px;flex:none;margin-top:3px}
+.next-label{flex-basis:100%;margin-top:4px}
+.menu .next-in{flex:1 1 100%;min-height:max(40px,var(--hit));padding:6px 12px;font-size:16px}
+.next-sec{margin-bottom:calc(var(--gap) + 12px)}
+.next-list{border-top:0}
+.next-list .nrow:first-child{padding-top:4px}
+.next-row>svg{width:20px;height:20px;margin:calc((var(--hit) - 20px)/2) 0}
 .task-time{font-size:18px;text-align:right;white-space:nowrap}
 .task-week{font-size:14px;line-height:18px;color:var(--ink-2);white-space:nowrap}
 @media (pointer:coarse){.task-week{font-size:16px;line-height:20px}}
@@ -485,6 +493,10 @@ body.zen .qnote{max-width:520px;width:100%;align-self:center}
 
   <section id="view-notes" role="tabpanel" aria-labelledby="tab-notes" hidden>
     <div class="notes-view">
+      <section class="next-sec" id="next-sec" aria-labelledby="h-next" hidden>
+        <div class="sec-head"><h2 id="h-next">Prochaines étapes</h2><span class="meta">notées en fin de session</span></div>
+        <ul class="journal next-list" id="next-list"></ul>
+      </section>
       <div class="sec-head"><h2 id="h-notes">Notes rapides</h2><span class="meta" id="notes-meta"></span></div>
       <p class="hint notes-intro">Ce que tu as noté pendant tes blocs, sans décrocher : une tâche qu'on t'a confiée, une info, une idée. Coche ce qui est traité, ou fais-en une tâche.</p>
       <form class="qnote-row notes-add" id="notes-add" autocomplete="off">
@@ -740,7 +752,7 @@ function endDay(){
 function closeDay(){
   const t = taskById(S.currentTaskId), v = ($("#next-step") || {}).value;
   if(t && v !== undefined){ const n = v.trim(); if(n !== (t.next || "")){ t.next = n; touch(t); } }
-  S.dayEnd = Object.assign({}, S.dayEnd, { closed:true }); saveState(); render(); toast("Session close. Ta prochaine étape t'attendra ici.");
+  S.dayEnd = Object.assign({}, S.dayEnd, { closed:true }); saveState(); render(); toast(t && t.next ? "Session close. Ta prochaine étape est notée sur la tâche et dans l'onglet Notes." : "Session close.");
 }
 function beginBlock(){
   if(!S.currentTaskId){ toast("Choisis ou crée d'abord une tâche."); $("#add-name").focus(); return; }
@@ -930,7 +942,7 @@ function renderPillow(){
     sub = el >= 90*MIN ? "Plus de 90 min : pense à faire une vraie pause." : `Chrono libre. Pause méritée si tu t'arrêtes maintenant : ${flowBreak(el)} min.`;
     pins = a.recenters.map(t => Math.min(60, t/MIN));
     document.title = `${clock(el)} · Léger — Ultradien`;
-  } else if(de && !a && !S.rite){
+  } else if(de && !de.closed && !a && !S.rite){
     const d = dayTotals(); total = 30; doneMin = 0;
     phase = "Session terminée"; col = "rest"; big = fmt(d.deep + d.light);
     sub = `Aujourd'hui, dont ${fmt(d.deep)} en profond et ${fmt(d.light)} en léger, sur ${d.blocks} bloc${d.blocks > 1 ? "s" : ""}.`;
@@ -1032,6 +1044,7 @@ const ICON = {
   x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
   more:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>',
   trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>',
+  next:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>',
   pauseI:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>',
 };
 
@@ -1225,9 +1238,11 @@ function renderGroups(){
             : `<button type="button" class="task-sel" data-sel="${t.id}" aria-pressed="${isCur}"><span class="task-name">${esc(t.name)}${t.mode==="light"?' <span class="badge">léger</span>':""}${t.archived?' <span class="task-week">(archivée)</span>':""}</span>
             <span class="task-time num">${o.total ? fmt(o.total) : "—"}${o.week ? `<br><span class="task-week">${fmt(o.week)} cette sem.</span>` : ""}</span></button>`}
           <button class="icon-btn" type="button" data-menu="${t.id}" aria-label="Options de ${esc(t.name)}" aria-expanded="${ui.menu===t.id}">${ICON.more}</button>
+          ${t.next && !editT ? `<p class="task-next"><span class="sr">Prochaine étape : </span>${ICON.next}<span>${esc(t.next)}</span></p>` : ""}
           <div class="thread" aria-hidden="true">${w ? `<i style="width:${w}%;--c:var(--${ink})"></i>` : ""}</div></div>
           ${ui.menu===t.id ? `<div class="menu"><label for="mv-${t.id}">Projet</label><select class="select" id="mv-${t.id}" data-move="${t.id}">${projOptions(t.projectId)}</select>
             <label for="md-${t.id}">Mode</label><select class="select" id="md-${t.id}" data-mode="${t.id}"><option value="deep" ${(t.mode||"deep")==="deep"?"selected":""}>Profond</option><option value="light" ${t.mode==="light"?"selected":""}>Léger</option></select>
+            <label for="nx-${t.id}" class="next-label">Prochaine étape</label><input class="input next-in" id="nx-${t.id}" data-next="${t.id}" maxlength="200" value="${esc(t.next || "")}" placeholder="Pour reprendre sans effort">
             <p class="hint">Profond ou léger ? Test de Cal Newport : combien de mois faudrait-il pour former un jeune diplômé à cette tâche ? Quelques semaines suffisent : elle est légère.</p>
             <button class="ghost" type="button" data-edit-t="${t.id}">Renommer</button><button class="ghost" type="button" data-arch="${t.id}">${t.archived?"Désarchiver":"Archiver"}</button><button class="ghost del-btn push" type="button" data-del-t="${t.id}">Supprimer</button></div>` : ""}`; }).join("")}</div>`;
   }).join("");
@@ -1241,6 +1256,8 @@ function renderGroups(){
   G.querySelectorAll("[data-move]").forEach(s=>s.onchange=()=>{ const t = taskById(s.dataset.move);
     if(s.value==="__new"){ ui.pendingMove = t.id; showNewProj(); return; }
     t.projectId = s.value || null; touch(t); ui.menu = null; saveState(); render(); });
+  G.querySelectorAll("[data-next]").forEach(i => { i.onkeydown = e => { if(e.key === "Enter"){ e.preventDefault(); i.blur(); } };
+    i.onchange = () => { const t = taskById(i.dataset.next); if(!t) return; const v = i.value.trim(); if(v === (t.next || "")) return; if(v) t.next = v; else delete t.next; touch(t); saveState(); renderGroups(); renderPillow(); renderNotes(); }; });
   G.querySelectorAll("[data-mode]").forEach(s=>s.onchange=()=>{ const t = taskById(s.dataset.mode); t.mode = s.value; touch(t); if(t.id === S.currentTaskId && !S.active) S.mode = t.mode; saveState(); render(); });
   G.querySelectorAll("[data-arch]").forEach(b=>b.onclick=()=>{ const t = taskById(b.dataset.arch);
     if(S.active && S.active.taskId===t.id){ toast("Cette tâche est en cours."); return; }
@@ -1352,7 +1369,17 @@ function renderHist(){
 function announce(msg){ const l = $("#live"); if(!l) return; l.textContent = ""; requestAnimationFrame(() => { l.textContent = msg; }); }
 
 /* Onglet Notes */
+function renderNextSteps(){
+  const list = S.tasks.filter(t => t.next && !t.archived), sec = $("#next-sec"); sec.hidden = !list.length; if(!list.length) return;
+  $("#next-list").innerHTML = list.map(t => { const p = projById(t.projectId);
+    return `<li class="nrow next-row">${ICON.next}<div><p>${esc(t.next)}</p><div class="jmeta"><span class="task-n">${esc(t.name)}</span>${p ? `<span>${esc(p.name)}</span>` : ""}</div></div>
+      <div class="nact"><button type="button" class="ghost" data-resume="${t.id}">Reprendre cette tâche</button><button type="button" class="ghost" data-next-done="${t.id}">C'est fait</button></div></li>`; }).join("");
+  $("#next-list").querySelectorAll("[data-resume]").forEach(b => b.onclick = () => { if(S.active){ toast("Termine le bloc en cours pour changer de tâche."); return; }
+    const t = taskById(b.dataset.resume); S.currentTaskId = t.id; S.mode = t.mode || "deep"; S.dayEnd = null; saveState(); render(); showTab("focus", true); });
+  $("#next-list").querySelectorAll("[data-next-done]").forEach(b => b.onclick = () => { const t = taskById(b.dataset.nextDone); if(!t) return; delete t.next; touch(t); saveState(); render(); announce("Étape faite."); });
+}
 function renderNotes(){
+  if(ui.tab === "notes") renderNextSteps();
   const all = liveNotes(), open = all.filter(n => !n.done), nf = ui.nf || "open";
   const c = $("#notes-count"); c.hidden = !open.length; c.textContent = open.length;
   $("#tab-notes").setAttribute("aria-label", open.length ? `Notes, ${open.length} à traiter` : "Notes");
@@ -1712,7 +1739,18 @@ function renderInstall(){
   if(standalone()){ box.innerHTML = `<p>L'appli est installée sur cet appareil : elle s'ouvre seule, même hors ligne.</p>`; act.innerHTML = ""; return; }
   if(installEvt){ box.innerHTML = `<p>Ajoute Ultradien à l'écran d'accueil : elle s'ouvrira comme une appli, en plein écran, même sans réseau.</p>`;
     act.innerHTML = `<button class="btn md" id="install-now" type="button">Installer l'appli</button>`; $("#install-now").onclick = doInstall; return; }
-  box.innerHTML = `<p>Dans Chrome, ouvre le menu ⋮ en haut à droite, puis « Installer l'application » ou « Ajouter à l'écran d'accueil ». Si l'option n'apparaît pas, recharge la page une fois, connecté à Internet.</p>`; act.innerHTML = "";
+  box.innerHTML = `<p>Dans Chrome, ouvre le menu ⋮ en haut à droite, puis « Installer l'application », « Installer et créer un raccourci » ou « Ajouter à l'écran d'accueil ».</p><p id="install-diag" class="muted"></p>`; act.innerHTML = "";
+  diagInstall();
+}
+/* Vérifie ce qui dépend du site (mode hors ligne actif, fichier d'appli lisible) pour distinguer un souci du site d'un réglage de l'appareil */
+async function diagInstall(){
+  const el = $("#install-diag"); if(!el) return;
+  const sw = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
+  let mf = false; try{ const r = await fetch("manifest.webmanifest", { cache:"no-store" }); mf = r.ok && !!(await r.json()).icons; }catch(e){}
+  if(!el.isConnected) return;
+  el.textContent = sw && mf
+    ? "Côté site, tout est prêt : mode hors ligne actif et fichier d'appli lu. Si Chrome ne propose aucune de ces options, c'est un réglage de la tablette : autorise Chrome à créer des raccourcis sur l'écran d'accueil (Paramètres › Applis › Chrome › Autorisations), vérifie que l'écran d'accueil par défaut est celui de Lenovo, ou passe par « Partager… »."
+    : `Côté site, il manque encore : ${[sw ? "" : "le mode hors ligne (recharge la page une fois)", mf ? "" : "le fichier manifest.webmanifest"].filter(Boolean).join(" et ")}.`;
 }
 async function doInstall(){
   if(!installEvt) return; const e = installEvt; installEvt = null;
